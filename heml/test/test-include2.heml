@@ -1,0 +1,3 @@
+test include 2
+{?set %plop=pas glop}
+test include 2

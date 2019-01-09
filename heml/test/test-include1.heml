@@ -1,0 +1,4 @@
+test include 1
+test include 1
+{?include %src=test/test-include2.heml}
+test include 1

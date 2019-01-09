@@ -1,0 +1,72 @@
+{?set %encoding=utf-8
+	%blip=blop
+	%encoding=iso-8859-1}
+{document
+{section%titre de la section
+{section%titre de la sous section
+pargraphe 1
+{# commentaire #}
+pararaphe 2
+{section%titre de la sous sous section €€
+paragraphe 3
+- enumeration 1
+- enumeration 2
+  - enumeration 2.1
+  - enumeration 2.2
+    -enumeration 2.2.1
+	-enum 2.2.2
+    paragraphe indenté
+    - enum 2.2.3
+- enumeration 3
+paragraphe 4 : ce paragraphe contient {b un tag inline} pour {a%href=http://url%%voir}...
+plop
+}
+}
+}
+{section%derniere section
+dernier paragraphe
+}
+{bidule%blip%tag0=valeur tag 0%blop
+	%tag1=valeur tag 1	%tagZ=Machin chouette
+	%tag2=valeur tag 2
+{machin%attr=tralala}
+    %tagHello=hello
+Reprise de texte eventuellement structuré
+toto
+{machin%attr=tralala}
+titi
+{machin%attr=tralala
+	{chouette%plip}
+}
+- bla
+- bla
+}
+{?table %record=tableRowName %fields=field1,field2,field3
+un		% un1		% un2
+deux	% deux1	%	% deux3
+trois	% trois1	% trois2 % trois3
+}
+plop
+{elem
+{?table %record=tableRowName %style=attr %fields=field1,field2,field3
+un		% un1		% un2
+deux	%% deux2		% deux3
+trois	% trois1	% trois2 % trois3
+quatre	% quatre1
+}
+{?include %src=test/test-include1.heml}
+skdjhskdjhfskjdf
+lsdkfjsdlkf
+{?table %fieldSep=" \t" %token=true
+a	b	c	d		e
+1	        2	3	4
+}
+{?table %src=test/test.csv %fieldSep=;}
+{plop
+    ppppp
+    ppppp
+ppp
+}
+- sldkfjs
+}
+}
