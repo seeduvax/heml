@@ -1,0 +1,1 @@
+{"version":1,"ops":[{"type":1,"author":{"id":"8c18e87e01f678b3190988de9735c88384d7ae65"},"timestamp":1567884974,"title":"add option to set xsl search path","message":"Let user define alternated directories from where searching file with\nxs:include, document and simular xsl features.","files":null}]}
