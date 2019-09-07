@@ -50,6 +50,7 @@ public class HEML {
 			String inputPath="-";
 			String outputPath="-";
 			String xslPath=null;
+            String searchPath=null;
             Hashtable<String,String> xslParams=new Hashtable<String,String>();
 			while (i<args.length) {
 				if ("-in".equals(args[i])) {
@@ -71,6 +72,10 @@ public class HEML {
                     String value=args[i];
                     xslParams.put(name,value);
 				}
+                else if ("-path".equals(args[i])) {
+					i++;
+					searchPath=args[i];
+                }
 				else {
 					System.out.println("Unexpected argument: "+args[i]);
 				}
@@ -91,6 +96,7 @@ public class HEML {
                 for (String name : xslParams.keySet()) {
                     parser.setXslParam(name,xslParams.get(name));
                 }
+                parser.setSearchPath(searchPath);
 			}
             parser.run();
         }

@@ -14,8 +14,11 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Hashtable;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -45,6 +48,7 @@ public class Parser implements Runnable {
     private OutputStream _out;
     private boolean _docOpen=false;
     private ErrHandler _errHandler;
+    private String _searchPath=null;
 
     private void startMeta() {
         _meta=true;
@@ -230,6 +234,20 @@ public class Parser implements Runnable {
 				InputStream xslInput=
                         new ByteArrayInputStream(_bufOutput.toByteArray());
 				TransformerFactory tf=TransformerFactory.newInstance();
+                if (_searchPath!=null) {
+                    URIResolver defResolver=tf.getURIResolver();
+                    tf.setURIResolver(new URIResolver() {
+                        public Source resolve(String href, String base) throws TransformerException {
+                            try {
+                                InputStream is=new FileInputStream(_searchPath+"/"+href);
+                                return new StreamSource(is);
+                            }
+                            catch (IOException ex) {
+                                return defResolver.resolve(href,base);
+                            }
+                        }
+                    });
+                }
 				Transformer style=tf.newTransformer(new StreamSource(_xslPath));
 				// TODO handle xsl parameters. (style.setParamter(key,value));
                 for (String param : _parameters.keySet()) {
@@ -245,6 +263,9 @@ public class Parser implements Runnable {
 	}
     public void setXslParam(String name,String value) {
         _parameters.put(name,value);
+    }
+    public void setSearchPath(String path) {
+        _searchPath=path;
     }
     public void setXslPath(String path) {
         if (_xslPath==null&&_handler==null) {
