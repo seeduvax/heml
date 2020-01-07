@@ -235,7 +235,12 @@ public class Parser implements Runnable {
                         new ByteArrayInputStream(_bufOutput.toByteArray());
 				TransformerFactory tf=TransformerFactory.newInstance();
                 if (_searchPath!=null) {
-                    URIResolver defResolver=tf.getURIResolver();
+                    URIResolver r=tf.getURIResolver();
+                    if (r==null) {
+				        Transformer t=tf.newTransformer(new StreamSource(_xslPath));
+                        r=t.getURIResolver();
+                    }
+                    final URIResolver defResolver=r;
                     tf.setURIResolver(new URIResolver() {
                         public Source resolve(String href, String base) throws TransformerException {
                             try {
