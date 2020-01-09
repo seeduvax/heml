@@ -25,8 +25,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
 import java.util.Stack;
 import org.xml.sax.SAXException;
@@ -50,7 +52,7 @@ public class HEML {
 			String inputPath="-";
 			String outputPath="-";
 			String xslPath=null;
-            String searchPath=null;
+            List<String> searchPaths = new ArrayList<>();
             Hashtable<String,String> xslParams=new Hashtable<String,String>();
 			while (i<args.length) {
 				if ("-in".equals(args[i])) {
@@ -74,7 +76,7 @@ public class HEML {
 				}
                 else if ("-path".equals(args[i])) {
 					i++;
-					searchPath=args[i];
+					searchPaths.add(args[i]);
                 }
 				else {
 					System.out.println("Unexpected argument: "+args[i]);
@@ -96,7 +98,9 @@ public class HEML {
                 for (String name : xslParams.keySet()) {
                     parser.setXslParam(name,xslParams.get(name));
                 }
-                parser.setSearchPath(searchPath);
+                for (String searchPath : searchPaths) {
+                    parser.addSearchPath(searchPath);                	
+                }
 			}
             parser.run();
         }

@@ -13,7 +13,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -48,7 +51,7 @@ public class Parser implements Runnable {
     private OutputStream _out;
     private boolean _docOpen=false;
     private ErrHandler _errHandler;
-    private String _searchPath=null;
+    private List<String> _searchPaths = new ArrayList<>();
 
     private void startMeta() {
         _meta=true;
@@ -234,22 +237,18 @@ public class Parser implements Runnable {
 				InputStream xslInput=
                         new ByteArrayInputStream(_bufOutput.toByteArray());
 				TransformerFactory tf=TransformerFactory.newInstance();
-                if (_searchPath!=null) {
-                    URIResolver r=tf.getURIResolver();
-                    if (r==null) {
-				        Transformer t=tf.newTransformer(new StreamSource(_xslPath));
-                        r=t.getURIResolver();
-                    }
-                    final URIResolver defResolver=r;
+                if (!_searchPaths.isEmpty()) {
                     tf.setURIResolver(new URIResolver() {
                         public Source resolve(String href, String base) throws TransformerException {
-                            try {
-                                InputStream is=new FileInputStream(_searchPath+"/"+href);
-                                return new StreamSource(is);
-                            }
-                            catch (IOException ex) {
-                                return defResolver.resolve(href,base);
-                            }
+                        	for (String searchPath : _searchPaths) {
+                                try {
+                                    InputStream is=new FileInputStream(searchPath + "/" + href);
+                                    return new StreamSource(is);
+                                }
+                                catch (IOException ex) {}                        		
+                        	}
+                        	// else load from local.
+                            return new StreamSource(href);
                         }
                     });
                 }
@@ -269,8 +268,8 @@ public class Parser implements Runnable {
     public void setXslParam(String name,String value) {
         _parameters.put(name,value);
     }
-    public void setSearchPath(String path) {
-        _searchPath=path;
+    public void addSearchPath(String path) {
+        _searchPaths.add(path);
     }
     public void setXslPath(String path) {
         if (_xslPath==null&&_handler==null) {
