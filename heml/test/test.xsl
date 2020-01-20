@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:include href="inc.xsl"/>
+<xsl:include href="plop/inc.xsl"/>
 <xsl:param name="param">default</xsl:param>
 <xsl:output method="text"/>
 <xsl:template match="document">

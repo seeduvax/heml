@@ -13,82 +13,128 @@ import java.io.PrintStream;
 
 
 public class TestHEML implements ParserCallback {
-	private Parser _heml;
     private String _outputDir=System.getenv("TTARGETDIR");
-    private void doParse(ParserCallback pc) throws Exception {
-		reset();
-		_heml=new Parser("test/test.heml", pc);
-		_heml.run();
+    private Parser getParser(ParserCallback pc) {
+        try {
+            return new Parser("test/test.heml",pc);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    private Parser getParser(String outFile) {
+        try {
+            return new Parser("test/test.heml",
+                new PrintStream(new FileOutputStream(_outputDir+"/"+outFile)));
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    private Exception checkParse(Parser p) {
+        Exception ex=null;
+        try {
+            reset();
+            p.run();
+        }
+        catch (Exception e) {
+            ex=e;
+        }
+        return ex;
+    }
+
+    private class EH implements Parser.ErrHandler {
+        public int _count=0;
+        public void handle(String streamName, int line, int col, String msg) {
+            _count++;
+        }
+    }
+    @Test
+    public void testXsl() {
+System.out.println("-------------------------------");
+        Parser p=getParser("testHEML-Xsl.txt");
+        EH eh=new EH();
+        p.setXslPath("test/test.xsl");
+        p.setErrHandler(eh);
+        assertNull(checkParse(p));
+        assertEquals(2,eh._count);
+System.out.println("-------------------------------");
+        p=getParser("testHEML-Xsl.txt");
+        eh=new EH();
+        p.setXslPath("test/test.xsl");
+        p.setErrHandler(eh);
+        p.addSearchPath("test/plop");
+        assertNull(checkParse(p));
+System.out.println("-------------------------------");
+        assertEquals(1,eh._count);
     }
 
     @Test 
     public void testParseToXML() {
-        Exception ex=null;
         try {
             _out=new PrintStream(new FileOutputStream(_outputDir+"/testHEML-XmlWriter.xml"));
             XmlWriter writer=new XmlWriter(_out);
-            doParse(writer);
+            Parser p=getParser(writer);
+            assertNull(checkParse(p));
             for (Exception wex : writer.getErrors()) {
                 System.err.println("Err: "+wex);
             }
             assertFalse(writer.hasError());
             _out.close();
         }
-        catch(Exception e) {
-            ex=e;
+        catch (Exception ex) {
             ex.printStackTrace();
+            assertNotNull(null);
         }
-        assertNull(ex);
     }
 
     @Test 
     public void testParseToBasicXML() {
-        Exception ex=null;
         try {
             _out=new PrintStream(new FileOutputStream(_outputDir+"/testHEML-BasicXmlWriter.xml"));
             BasicXmlWriter writer=new BasicXmlWriter(_out);
-            doParse(writer);
+            Parser p=getParser(writer);
+            assertNull(checkParse(p));
             for (Exception wex : writer.getErrors()) {
                 System.err.println("Err: "+wex);
             }
             assertFalse(writer.hasError());
             _out.close();
         }
-        catch(Exception e) {
-            ex=e;
+        catch (Exception ex) {
             ex.printStackTrace();
+            assertNotNull(null);
         }
-        assertNull(ex);
     }
 
     @Test 
     public void testParse() {
-        Exception ex=null;
         try {
             _out=new PrintStream(new FileOutputStream(_outputDir+"/testHEML-debugWriter.txt"));
-            doParse(this);
+            Parser p=getParser(this);
+            assertNull(checkParse(p));
             _out.close();
         }
-        catch(Exception e) {
-            ex=e;
+        catch (Exception ex) {
             ex.printStackTrace();
+            assertNotNull(null);
         }
-        assertNull(ex);
     }
 
     @Test 
     public void testWriter() {
-        Exception ex=null;
         try {
             _out=new PrintStream(new FileOutputStream(_outputDir+"/testHEML-HEMLWriter.txt"));
-            doParse(new HemlWriter(_out));
+            Parser p=getParser(new HemlWriter(_out));
+            assertNull(checkParse(p));
             _out.close();
         }
-        catch(Exception e) {
-            ex=e;
+        catch (Exception ex) {
             ex.printStackTrace();
+            assertNotNull(null);
         }
-        assertNull(ex);
     }
 
     private int _indent=0;

@@ -239,16 +239,54 @@ public class Parser implements Runnable {
 				TransformerFactory tf=TransformerFactory.newInstance();
                 if (!_searchPaths.isEmpty()) {
                     tf.setURIResolver(new URIResolver() {
-                        public Source resolve(String href, String base) throws TransformerException {
-                        	for (String searchPath : _searchPaths) {
-                                try {
-                                    InputStream is=new FileInputStream(searchPath + "/" + href);
-                                    return new StreamSource(is);
+                        private boolean isAbsolute(String path) {
+                            return path.startsWith("/") ||
+                                    path.startsWith("file://") ||
+                                    path.startsWith("http://") ||
+                                    path.startsWith("https://") ||
+                                    path.startsWith("ftp://") ||
+                                    path.startsWith("sftp://");
+                            // TODO should add something to make windows absolute path
+                            // works (for instance C:\path)
+                        }
+                        private Source getSource(String path) {
+                            String url=path;
+                            if (path.startsWith("/")) {
+                                url="file://"+path;
+                            }
+                            try {
+                                if (isAbsolute(url)) {
+                                    return new StreamSource(new URL(url).openStream());
                                 }
-                                catch (IOException ex) {}                        		
-                        	}
-                        	// else load from local.
-                            return new StreamSource(href);
+                                else {
+                                    return new StreamSource(new FileInputStream(url));
+                                }
+                            }
+                            catch (IOException ex) {
+                                return null;
+                            }
+                        }
+                        public Source resolve(String href, String base) throws TransformerException {
+                            Source res=null;
+                            if (isAbsolute(href)) {
+                                res=getSource(href);
+                            }
+                            if (res==null) {
+                                for (String searchPath : _searchPaths) {
+                                    res=getSource(searchPath+"/"+href);
+                                    if (res!=null) {
+                                        break;
+                                    }
+                                }
+                            }
+                            if (res==null) {
+                                String dir=base.substring(0,base.lastIndexOf('/'));
+                                res=getSource(dir+"/"+href);
+                            }
+                        	if (res==null) {
+                                printErr("XSL:"+_xslPath+". Can't resolve "+href);
+                            }
+                            return res;
                         }
                     });
                 }
