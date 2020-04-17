@@ -1,0 +1,1 @@
+{"version":1,"ops":[{"type":1,"author":{"id":"8c845d48d37e56ad6ff552de699ed7996a361851"},"timestamp":1587125862,"title":"When a section is opened after a list, this list is not closed. This lead to an error while generating pdf","message":"","files":null}]}
