@@ -1,0 +1,88 @@
+{document
+    {section %a1=titre de la section
+        {section %a1=titre de la sous section
+            pargraphe 1
+{# commentaire #}
+            pararaphe 2
+                -  enum11                 {kw
+toto                }
+ is in the kitchen
+                -  enum12                 {b
+I'm bold                }
+ !
+            {section %a1=titre de la sous sous section â¬â¬
+                paragraphe 3
+                    -  enumeration 1
+                    -  enumeration 2
+                        -  enumeration 2.1
+                        -  enumeration 2.2
+                            - enumeration 2.2.1
+                            - enum 2.2.2
+                            paragraphe indentÃ©
+                            -  enum 2.2.3
+                    -  enumeration 3
+                    paragraphe 4 : ce paragraphe contient                     {b
+un tag inline                    }
+ pour                     {a %href=http://url
+voir                    }
+...
+                    plop
+            }
+        }
+    }
+    {section %a1=derniere section
+        dernier paragraphe
+    }
+    {bidule %a1=blip %tag0=valeur tag 0 %a2=blop %tag1=valeur tag 1 %tagZ=Machin chouette %tag2=valeur tag 2
+        {machin %attr=tralala
+        }
+        %tagHello=hello
+        Reprise de texte eventuellement structurÃ©
+        toto
+        {machin %attr=tralala
+        }
+        titi
+        {machin %attr=tralala
+            {chouette %a1=plip
+            }
+        }
+            -  bla
+            -  bla
+    }
+    {%tableRowName%field1%field2%field3
+un	%un1	%un2
+deux	%deux1	%	%deux3
+trois	%trois1	%trois2	%trois3
+    %}
+    plop
+    {elem
+        {%tableRowName%field1%field2%field3
+un	%un1	%un2
+deux	%	%deux2	%deux3
+trois	%trois1	%trois2	%trois3
+quatre	%quatre1
+        %}
+        test include 1
+        test include 1
+        test include 2
+        test include 2
+        test include 1
+        skdjhskdjhfskjdf
+        lsdkfjsdlkf
+        {%tr%td
+a	%b	%c	%d	%e
+1	%2	%3	%4
+        %}
+        {%tr%td
+1	%2	%3	%4	%5
+
+	%	%III	%	%V
+a	%b	%c	%d	%e	%f
+        {plop
+            ppppp
+            ppppp
+            ppp
+        }
+            -  sldkfjs
+    }
+}

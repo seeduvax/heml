@@ -9,7 +9,11 @@ import net.eduvax.heml.XmlWriter;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 
 public class TestHEML implements ParserCallback {
@@ -72,9 +76,12 @@ System.out.println("-------------------------------");
     }
 
     @Test 
-    public void testParseToXML() {
+    public void testParseToXML() throws IOException {
         try {
-            _out=new PrintStream(new FileOutputStream(_outputDir+"/testHEML-XmlWriter.xml"));
+            String expected = "test/resources/expectedTestHEML-XmlWriter.xml";
+            String outPath = _outputDir+"/testHEML-XmlWriter.xml";
+            
+            _out=new PrintStream(new FileOutputStream(outPath));
             XmlWriter writer=new XmlWriter(_out);
             Parser p=getParser(writer);
             assertNull(checkParse(p));
@@ -83,6 +90,8 @@ System.out.println("-------------------------------");
             }
             assertFalse(writer.hasError());
             _out.close();
+            
+            assertTrue(areFilesEquals(expected, outPath));
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -124,17 +133,28 @@ System.out.println("-------------------------------");
     }
 
     @Test 
-    public void testWriter() {
+    public void testWriter() throws IOException {
         try {
-            _out=new PrintStream(new FileOutputStream(_outputDir+"/testHEML-HEMLWriter.txt"));
+            String expected = "test/resources/expectedTestHEML-HEMLWriter.txt";
+            String outPath = _outputDir+"/testHEML-HEMLWriter.txt";
+            
+            _out=new PrintStream(new FileOutputStream(outPath));
             Parser p=getParser(new HemlWriter(_out));
             assertNull(checkParse(p));
             _out.close();
+            
+            assertTrue(areFilesEquals(expected, outPath));
         }
         catch (Exception ex) {
             ex.printStackTrace();
             assertNotNull(null);
         }
+    }
+    
+    private boolean areFilesEquals(String file1, String file2) throws IOException {
+    	byte[] data1 = Files.readAllBytes(Paths.get(file1));
+    	byte[] data2 = Files.readAllBytes(Paths.get(file2));
+    	return data1 != null && data2 != null && Arrays.equals(data1, data2);
     }
 
     private int _indent=0;

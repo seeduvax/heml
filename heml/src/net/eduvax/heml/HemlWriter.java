@@ -48,7 +48,6 @@ public class HemlWriter implements ParserCallback {
         _out.println();
     }
     public void openIndent() {
-        _out.println();
         _indent++;
     }
     public void closeIndent() {

@@ -627,7 +627,7 @@ public class Parser implements Runnable {
             }
         }
 
-        private void checkIndentClosure() {
+        private void checkIndentClosure(boolean open) {
             int prevIndent=0;
             if (_indentStack.size()>0) {
                 prevIndent=_indentStack.peek();
@@ -637,7 +637,7 @@ public class Parser implements Runnable {
                 _indentStack.pop();
                 prevIndent=_indentStack.peek();
             }
-            if (_indent>prevIndent) {
+            if (open && (_indent>prevIndent || _indentStack.size() == 1)) {
                 openDoc();
                 _handler.openIndent();
                 _indentStack.push(_indent);
@@ -646,16 +646,17 @@ public class Parser implements Runnable {
         }
 		public void handle(char ch) {
 			if (ch=='\t') {
-					_indent+=_tabSize;;
+					_indent+=_tabSize;
 			}
 			else if (ch==' ') {
 					_indent++;
 			}
 			else if (ch==_separators[S_OPEN]) {
+                	checkIndentClosure(false);
 					setState(new SElem(this));
 			}
 			else if (ch=='-') {
-                    checkIndentClosure();
+                    checkIndentClosure(true);
 					setState(new IndentText(this,true));
 			}
 			else if (ch=='\r') {
@@ -669,7 +670,7 @@ public class Parser implements Runnable {
                 goBackState();
 			}
 			else {
-                checkIndentClosure();
+                checkIndentClosure(false);
 				_acc.append(ch);
 				setState(new IndentText(this,false));
 			}

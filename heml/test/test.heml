@@ -7,6 +7,8 @@
 pargraphe 1
 {# commentaire #}
 pararaphe 2
+    - enum11 {kw toto} is in the kitchen
+    - enum12 {b I'm bold} !
 {section%titre de la sous sous section €€
 paragraphe 3
 - enumeration 1
