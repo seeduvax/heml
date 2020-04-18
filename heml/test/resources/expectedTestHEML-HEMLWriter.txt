@@ -36,9 +36,9 @@ voir                    }
     {bidule %a1=blip %tag0=valeur tag 0 %a2=blop %tag1=valeur tag 1 %tagZ=Machin chouette %tag2=valeur tag 2
         {machin %attr=tralala
         }
-        %tagHello=hello
+            %tagHello=hello
         Reprise de texte eventuellement structurÃ©
-        toto
+            toto
         {machin %attr=tralala
         }
         titi

@@ -34,7 +34,7 @@ dernier paragraphe
 {machin%attr=tralala}
     %tagHello=hello
 Reprise de texte eventuellement structuré
-toto
+	toto
 {machin%attr=tralala}
 titi
 {machin%attr=tralala

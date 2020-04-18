@@ -48,9 +48,13 @@
     </section>
     <bidule a1="blip" tag0="valeur tag 0" a2="blop" tag1="valeur tag 1" tagZ="Machin chouette" tag2="valeur tag 2">
         <machin attr="tralala"/>
-        <p>%tagHello=hello</p>
+        <ul>
+            <p>%tagHello=hello</p>
+        </ul>
         <p>Reprise de texte eventuellement structurÃ©</p>
-        <p>toto</p>
+        <ul>
+            <p>toto</p>
+        </ul>
         <machin attr="tralala"/>
         <p>titi</p>
         <machin attr="tralala">

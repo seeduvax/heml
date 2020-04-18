@@ -53,6 +53,12 @@ public class Parser implements Runnable {
     private ErrHandler _errHandler;
     private List<String> _searchPaths = new ArrayList<>();
 
+    private enum IdentAction {
+    	Close,
+    	Open,
+    	ForceOpen
+    }
+
     private void startMeta() {
         _meta=true;
         _metaName="";
@@ -627,7 +633,7 @@ public class Parser implements Runnable {
             }
         }
 
-        private void checkIndentClosure(boolean open) {
+        private void checkIndentClosure(IdentAction action) {
             int prevIndent=0;
             if (_indentStack.size()>0) {
                 prevIndent=_indentStack.peek();
@@ -637,7 +643,7 @@ public class Parser implements Runnable {
                 _indentStack.pop();
                 prevIndent=_indentStack.peek();
             }
-            if (open && (_indent>prevIndent || _indentStack.size() == 1)) {
+            if (action != IdentAction.Close && (_indent>prevIndent || (action == IdentAction.ForceOpen && _indentStack.size() == 1))) {
                 openDoc();
                 _handler.openIndent();
                 _indentStack.push(_indent);
@@ -652,11 +658,11 @@ public class Parser implements Runnable {
 					_indent++;
 			}
 			else if (ch==_separators[S_OPEN]) {
-                	checkIndentClosure(false);
+                	checkIndentClosure(IdentAction.Close);
 					setState(new SElem(this));
 			}
 			else if (ch=='-') {
-                    checkIndentClosure(true);
+                    checkIndentClosure(IdentAction.ForceOpen);
 					setState(new IndentText(this,true));
 			}
 			else if (ch=='\r') {
@@ -670,7 +676,7 @@ public class Parser implements Runnable {
                 goBackState();
 			}
 			else {
-                checkIndentClosure(false);
+                checkIndentClosure(IdentAction.Open);
 				_acc.append(ch);
 				setState(new IndentText(this,false));
 			}
