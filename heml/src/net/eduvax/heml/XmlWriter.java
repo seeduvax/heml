@@ -20,7 +20,6 @@
  */
 package net.eduvax.heml;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
@@ -178,7 +177,6 @@ public class XmlWriter implements ParserCallback {
 			else {
 				StringBuffer text=new StringBuffer();
 				Iterator<String> it=_fieldsName.iterator();
-				int i=0;
 				for (String value : fieldsValue) {
 					if (it.hasNext()) {
 						_writer.addAttribute(it.next(),value);
