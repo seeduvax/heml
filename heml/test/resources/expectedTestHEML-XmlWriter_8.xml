@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><document>
+<section a1="titre de la section">
+<section a1="titre de la sous section">
+<p>pargraphe 1</p>
+<p>pararaphe 2</p>
+<ul>
+<li> enum11 <kw>toto</kw> is in the kitchen</li>
+<li> enum12 <b>I'm bold</b> !</li>
+</ul>
+<section a1="titre de la sous sous section â¬â¬">
+<p>paragraphe 3</p>
+<ul>
+<li> enumeration 1</li>
+<li> enumeration 2</li>
+<ul>
+<li> enumeration 2.1</li>
+<li> enumeration 2.2</li>
+<ul>
+<li>enumeration 2.2.1</li>
+<li>enum 2.2.2</li>
+<p>paragraphe indentÃ©</p>
+<li> enum 2.2.3</li>
+</ul>
+</ul>
+<li> enumeration 3</li>
+<p>paragraphe 4 : ce paragraphe contient <b>un tag inline</b> pour <a href="http://url">voir</a>...</p>
+<p>plop</p>
+</ul>
+</section>
+</section>
+</section>
+<section a1="derniere section">
+<p>dernier paragraphe</p>
+</section>
+<bidule a1="blip" tag0="valeur tag 0" a2="blop" tag1="valeur tag 1" tagZ="Machin chouette" tag2="valeur tag 2">
+<machin attr="tralala"/>
+<ul>
+<p>%tagHello=hello</p>
+</ul>
+<p>Reprise de texte eventuellement structurÃ©</p>
+<ul>
+<p>toto</p>
+</ul>
+<machin attr="tralala"/>
+<p>titi</p>
+<machin attr="tralala">
+<chouette a1="plip"/>
+</machin>
+<ul>
+<li> bla</li>
+<li> bla</li>
+</ul>
+</bidule>
+<tableRowName>
+<field1>un</field1>
+<field2>un1</field2>
+<field3>un2</field3>
+</tableRowName>
+<tableRowName>
+<field1>deux</field1>
+<field2>deux1</field2>
+<field3/>
+<f1>deux3</f1>
+</tableRowName>
+<tableRowName>
+<field1>trois</field1>
+<field2>trois1</field2>
+<field3>trois2</field3>
+<f1>trois3</f1>
+</tableRowName>
+<p>plop</p>
+<elem>
+<tableRowName field1="un" field2="un1" field3="un2"/>
+<tableRowName field1="deux" field2="" field3="deux2">deux3</tableRowName>
+<tableRowName field1="trois" field2="trois1" field3="trois2">trois3</tableRowName>
+<tableRowName field1="quatre" field2="quatre1"/>
+<p>test include 1</p>
+<p>test include 1</p>
+<p>test include 2</p>
+<p>test include 2</p>
+<p>test include 1</p>
+<p>skdjhskdjhfskjdf</p>
+<p>lsdkfjsdlkf</p>
+<tr>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+<td>e</td>
+</tr>
+<tr>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+</tr>
+<tr>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>5</td>
+</tr>
+<tr/>
+<tr>
+<td/>
+<td/>
+<td>III</td>
+<td/>
+<td>V</td>
+</tr>
+<tr>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>d</td>
+<td>e</td>
+<td>f</td>
+</tr>
+<plop>
+<p>ppppp</p>
+<p>ppppp</p>
+<p>ppp</p>
+</plop>
+<ul>
+<li> sldkfjs</li>
+</ul>
+</elem>
+</document>

@@ -79,6 +79,7 @@ System.out.println("-------------------------------");
     public void testParseToXML() throws IOException {
         try {
             String expected = "test/resources/expectedTestHEML-XmlWriter.xml";
+            String expectedV8 = "test/resources/expectedTestHEML-XmlWriter_8.xml";
             String outPath = _outputDir+"/testHEML-XmlWriter.xml";
             
             _out=new PrintStream(new FileOutputStream(outPath));
@@ -91,7 +92,12 @@ System.out.println("-------------------------------");
             assertFalse(writer.hasError());
             _out.close();
             
-            assertTrue(areFilesEquals(expected, outPath));
+            if (getJavaVersion() > 9) {
+                assertTrue(areFilesEquals(expected, outPath));            	
+            }
+            else {
+                assertTrue(areFilesEquals(expectedV8, outPath));
+            }
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -157,6 +163,16 @@ System.out.println("-------------------------------");
     	return data1 != null && data2 != null && Arrays.equals(data1, data2);
     }
 
+    private int getJavaVersion() {
+    	String version = System.getProperty("java.version");
+    	if (version.startsWith("1.")) {
+    		version = version.substring(2);
+    	}
+    	int dotPos = version.indexOf('.');
+    	int dashPos = version.indexOf('-');
+    	return Integer.parseInt(version.substring(0, dotPos > -1 ? dotPos : (dashPos > -1 ? dashPos : 1)));   			
+    }
+    
     private int _indent=0;
     private PrintStream _out;
 
