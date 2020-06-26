@@ -1,0 +1,1 @@
+{"version":1,"ops":[{"type":1,"author":{"id":"8c845d48d37e56ad6ff552de699ed7996a361851"},"timestamp":1593164522,"title":"When an element is opened just after the opening of a parent element, the conversion heml-\u003exml not working. Ex: {p {kw} toto}","message":"","files":null}]}
