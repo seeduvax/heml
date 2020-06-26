@@ -557,19 +557,19 @@ public class Parser implements Runnable {
 		}
 		public void handle(char ch) { 
 			if (ch==_separators[S_SEP]) {
-						openElement();
-						setState(new TorA1(getBackState()));
+				openElement();
+				setState(new TorA1(getBackState()));
 			}
 			else if (ch=='\r') {
 			}
 			else if (ch=='\n') {
-						openElement();
-						setState(new TorA2(getBackState()));
+				openElement();
+				setState(new TorA2(getBackState()));
 			}						
 			else if (ch==' ') {
-						openElement();
-						setState(new TorA3(getBackState()));
-			}						
+				openElement();
+				setState(new TorA3(getBackState()));
+			}
 			else if (ch==_separators[S_CLOSE]) {
                 openElement();
                 if (_meta) {
@@ -582,7 +582,7 @@ public class Parser implements Runnable {
 	            goBackState();
 			}
 			else {
-						_acc.append(ch);
+				_acc.append(ch);
 			}
 		}
 	}
@@ -613,7 +613,7 @@ public class Parser implements Runnable {
             goBackState();
 		}
 	}
-	
+
 	/**
 	 * count indent chars.
 	 */
@@ -686,15 +686,10 @@ public class Parser implements Runnable {
 	 * Manage indentation
 	 */
 	private class IndentText extends State {
-        private int _openIndent=0;
 		private Indent _indent=null;
         private boolean _closed=false;
-		private boolean _indentAdded=false;
 		private boolean _bullet=false;
-        public int getOpenIndent() {
-            return _openIndent;
-        }
-		public IndentText(Indent back,boolean bullet) {
+		public IndentText(Indent back, boolean bullet) {
 			super(back);
             _indent=back;
 			_bullet=bullet;
@@ -721,31 +716,31 @@ public class Parser implements Runnable {
 			if (ch=='\r') {
 			}
 			else if (ch=='\n') {
-					addText();
-                    close();
-					goBackState();
+				addText();
+                close();
+				goBackState();
 			}
 			else if (ch==_separators[S_OPEN]) {
-                    addText();
-					setState(new SElem(this));
+				addText();
+				setState(new SElem(this));
 			}
 			else if (ch==_separators[S_CLOSE]) {
-                    addText();
-                    close();
-                    if (_meta) {
-                        endMetaAttributes();
-                    }
-                    else {
-					    _indent.close();
-                        _handler.closeElement();
-                        _indent.goBackState();
-                    }
+				addText();
+                close();
+                if (_meta) {
+                    endMetaAttributes();
+                }
+                else {
+				    _indent.close();
+                    _handler.closeElement();
+                    _indent.goBackState();
+                }
             }
 			else if (ch==_separators[S_ESC]) {
-					setState(new EscChar(this));
+				setState(new EscChar(this));
 			}
 			else {
-					_acc.append(ch);
+				_acc.append(ch);
 			}
 		}
 	}
@@ -1154,8 +1149,11 @@ ex.printStackTrace();
                 }
                 else {
                     _handler.endAttributes();
-					_acc.append(ch);
 					setState(new InlineText(getBackState()));
+                    if (ch == _separators[S_OPEN]) {
+                    	getState().handle(ch);
+                    }
+                    else _acc.append(ch);
                 }
 			}
 		}

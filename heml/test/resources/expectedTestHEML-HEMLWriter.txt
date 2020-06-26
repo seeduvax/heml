@@ -7,9 +7,23 @@
                 -  enum11                 {kw
 toto                }
  is in the kitchen
-                -  enum12                 {b
-I'm bold                }
- !
+                -                  {p
+enum12                     {b
+I'm bold                    }
+ !                }
+
+                    -                      {kw
+important                    }
+ sublist1 (cf.                     {xref
+nothing                    }
+)
+                    -  sublist2
+                test
+            {p
+                {kw
+One                }
+ text after list            }
+            tests
             {section %a1=titre de la sous sous section â¬â¬
                 paragraphe 3
                     -  enumeration 1
@@ -32,6 +46,10 @@ voir                    }
     }
     {section %a1=derniere section
         dernier paragraphe
+        By default, ABS manages two build mode:
+            -  debug: default mode for the everyday developer work.
+            -  release: default mode for the distribution package.
+        Each sub-makefile handling a specific module type shall adapt its part of the build process according the mode. The debug mode shall provide debug information and disable any optimization is the final targets, while the release mode shall remove the debug information and can apply some optimizations.
     }
     {bidule %a1=blip %tag0=valeur tag 0 %a2=blop %tag1=valeur tag 1 %tagZ=Machin chouette %tag2=valeur tag 2
         {machin %attr=tralala

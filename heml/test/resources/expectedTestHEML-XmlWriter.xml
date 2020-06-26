@@ -10,11 +10,30 @@
                      is in the kitchen
                 </li>
                 <li>
-                     enum12 
-                    <b>I'm bold</b>
-                     !
+                     
+                    <p>
+                        enum12 
+                        <b>I'm bold</b>
+                         !
+                    </p>
                 </li>
+                <ul>
+                    <li>
+                         
+                        <kw>important</kw>
+                         sublist1 (cf. 
+                        <xref>nothing</xref>
+                        )
+                    </li>
+                    <li> sublist2</li>
+                </ul>
+                <p>test</p>
             </ul>
+            <p>
+                <kw>One</kw>
+                 text after list
+            </p>
+            <p>tests</p>
             <section a1="titre de la sous sous section â¬â¬">
                 <p>paragraphe 3</p>
                 <ul>
@@ -45,6 +64,12 @@
     </section>
     <section a1="derniere section">
         <p>dernier paragraphe</p>
+        <p>By default, ABS manages two build mode:</p>
+        <ul>
+            <li> debug: default mode for the everyday developer work.</li>
+            <li> release: default mode for the distribution package.</li>
+        </ul>
+        <p>Each sub-makefile handling a specific module type shall adapt its part of the build process according the mode. The debug mode shall provide debug information and disable any optimization is the final targets, while the release mode shall remove the debug information and can apply some optimizations.</p>
     </section>
     <bidule a1="blip" tag0="valeur tag 0" a2="blop" tag1="valeur tag 1" tagZ="Machin chouette" tag2="valeur tag 2">
         <machin attr="tralala"/>
