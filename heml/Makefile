@@ -23,12 +23,20 @@ ifneq ($(wildcard app.cfg),)
 PRJROOT:=$(CURDIR)
 endif
 ifneq ($(wildcard module.cfg),)
-PRJROOT:=$(shell dirname $(CURDIR))
+PRJROOT:=$(dir $(CURDIR))
 endif
+ifeq ($(HOME),)
 ABSWS:=$(PRJROOT)/../abs
+else
+ABSWS:=$(HOME)/.abs
+endif
 
 include $(PRJROOT)/app.cfg
--include local.cfg
+-include $(ABSWS)/local.cfg
+-include $(PRJROOT)/local.cfg
+ifneq ($(wildcard module.cfg),)
+-include $(CURDIR)/local.cfg
+endif
 ABSROOT:=$(ABSWS)/abs-$(VABS)
 ABS_CACHE:=$(ABSWS)/cache
 include $(ABSROOT)/core/main.mk
@@ -56,19 +64,3 @@ $(ABSROOT)/%/main.mk: $(ABS_CACHE)/noarch/abs.%-$(VABS).tar.gz
 
 $(PRJROOT)/local.cfg:
 
-# update module bootstrap makefile from project app level bootstrap makefile
-ifneq ($(wildcard module.cfg),)
-Makefile: ../Makefile
-	@echo Updating module bootstrap makefile from parent directory
-	@cp $^ $@
-endif
-# update app bootstrap makefile from bootstrap makefile in abs core
-ifneq ($(wildcard app.cfg),)
-Makefile: $(ABSROOT)/core/bootstrap.mk
-	@echo Updating app bootstrap makefile from abs core
-	@cp $^ $@
-endif
-
-cleanabs:
-	@echo Cleaning ABS files and cache $(ABSWS)
-	@rm -rf $(ABSWS)
