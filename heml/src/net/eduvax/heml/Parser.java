@@ -1,6 +1,8 @@
 package net.eduvax.heml;
 
 import java.net.URL;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -92,6 +94,9 @@ public class Parser implements Runnable {
 		else if ("table".equals(_metaName)) {
 			metaCmd=new MetaTable();
 		}
+        else if ("exec".equals(_metaName)) {
+            metaCmd=new MetaExec();
+        }
         if (metaCmd!=null) {
             try {
                 for (String param : _metaArgs.keySet()) {
@@ -933,6 +938,42 @@ public class Parser implements Runnable {
             }
 		}
 	}
+    /**
+     * Exec meta command
+     */
+    public class MetaExec implements MetaCommand {
+        private String _cmd;
+        public void setParameter (String id, String value) {
+            if ("cmd".equals(id)) {
+                _cmd=value;
+            }
+        }
+        public void run() {
+            try {
+                Vector<String> cmd=new Vector<String>();
+                StringTokenizer st=new StringTokenizer(_cmd," ");
+                while (st.hasMoreTokens()) {
+                    cmd.add(st.nextToken());
+                }
+                StringBuffer stdout=new StringBuffer();
+                ProcessBuilder pb=new ProcessBuilder(cmd);
+                Process p=pb.start();
+                BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String line="";
+                while (line!=null) {
+                    line=reader.readLine();
+                    if (line!=null) {
+                        stdout.append(line);
+                        stdout.append('\n');
+                    }
+                }
+                _handler.addCData(stdout.toString());
+            }
+            catch (Exception ex) {
+                printErr("Exec error ["+_cmd+"]: "+ex.getMessage());
+            }
+        }
+    }  
 	/**
 	 * Table meta command
 	 */
