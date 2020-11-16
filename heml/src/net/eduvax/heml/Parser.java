@@ -412,7 +412,7 @@ public class Parser implements Runnable {
 		}
 // puml: state Attr {
 // puml: state " " as _Attr
-// puml: [*] --> _Attr
+// puml: [*] -> _Attr
 		public void handle(char ch) {
 			if (ch=='=') {
 // puml: _Attr --> AttrV :"="
@@ -437,7 +437,7 @@ public class Parser implements Runnable {
 					setState(new EscChar(this));
 			}
 			else if (ch==_separators[S_CLOSE]) {
-// puml: _Attr --> [*] :"}"
+// puml: _Attr -> [H] :"}"
 				addAttribute();
                 if (_meta) {
                     endMetaAttributes();
@@ -460,7 +460,7 @@ public class Parser implements Runnable {
 	private class AttrV extends State {
 // puml: state AttrV {
 // puml: state " " as _AttrV
-// puml: [*] --> _AttrV
+// puml: [*] -> _AttrV
 		public AttrV(State s) {
 			super(s);
 		}
@@ -483,7 +483,7 @@ public class Parser implements Runnable {
 					setState(new EscChar(this));
 			}
 			else if (ch==_separators[S_CLOSE]) {
-// puml: _AttrV --> [*] : "}"
+// puml: _AttrV -> [H] : "}"
 				addAttribute();
                 if (_meta) {
                     endMetaAttributes();
@@ -529,9 +529,9 @@ public class Parser implements Runnable {
 		public void handle(char ch) {
 // puml: state ECData {
 // puml: state " " as _ECData
-// puml: [*] --> _ECData
+// puml: [*] -> _ECData
 			if (ch==_separators[S_CLOSE]) {
-// puml: _ECData --> [*] : "}" 
+// puml: _ECData -> [H] : "}" 
 					_handler.addCData(popAcc());
 					goBackState();
 			}
@@ -574,9 +574,9 @@ public class Parser implements Runnable {
 		public void handle(char ch) {
 // puml: state EComment {
 // puml: state " " as _EComment
-// puml: [*] --> _EComment
+// puml: [*] -> _EComment
 			if (ch==_separators[S_CLOSE]) {
-// puml: _EComment --> [*] : "}"
+// puml: _EComment -> [H] : "}"
 					_handler.addComment(popAcc());
 					goBackState();
 			}
@@ -599,7 +599,7 @@ public class Parser implements Runnable {
 		public void handle(char ch) { 
 // puml: state ElemName {
 // puml: state " " as _ElemName
-// puml: [*] --> _ElemName
+// puml: [*] -> _ElemName
 			if (ch==_separators[S_SEP]) {
 // puml: _ElemName --> TorA1 : "%"
 				openElement();
@@ -618,7 +618,7 @@ public class Parser implements Runnable {
 				setState(new TorA3(getBackState()));
 			}
 			else if (ch==_separators[S_CLOSE]) {
-// puml: _ElemName --> [*] : "}" 
+// puml: _ElemName -> [H] : "}" 
                 openElement();
                 if (_meta) {
                     endMetaAttributes();
@@ -647,7 +647,7 @@ public class Parser implements Runnable {
 		}
 		public void handle(char ch) {
 // puml: state EscChar {
-// puml: [*] --> [*]
+// puml: [*] -> [H]
 // puml: }
             switch (ch) {
                 case 't':
@@ -706,7 +706,7 @@ public class Parser implements Runnable {
 		public void handle(char ch) {
 // puml: state Indent {
 // puml: state " " as _Indent
-// puml: [*] --> _Indent
+// puml: [*] -> _Indent
 // puml: _Indent --> _Indent : "\\t <sp> \\n"
 			if (ch=='\t') {
 					_indent+=_tabSize;
@@ -730,7 +730,7 @@ public class Parser implements Runnable {
 					_indent=0;
 			}
 			else if (ch==_separators[S_CLOSE]) {
-// puml: _Indent --> [*] : "}"
+// puml: _Indent -> [H] : "}"
                 close();
                 _handler.closeElement();
                 goBackState();
@@ -780,7 +780,7 @@ public class Parser implements Runnable {
 			else if (ch=='\n') {
 // puml: state IndentText {
 // puml: state " " as _IndentText
-// puml: _IndentText --> [*] :"\\n}"
+// puml: _IndentText -> [H] :"\\n}"
 				addText();
                 close();
 				goBackState();
@@ -827,8 +827,9 @@ public class Parser implements Runnable {
 		public void handle(char ch) {
 // puml: state InlineText {
 // puml: state " " as _InlineText
+// puml: [*] -> _InlineText
 			if (ch==_separators[S_CLOSE]) {
-// puml: _InlineText --> [*] :"}"
+// puml: _InlineText -> [H] :"}"
                     addText();
 					_handler.closeElement();
                     goBackState();
@@ -1156,7 +1157,7 @@ ex.printStackTrace();
 		public void handle(char ch) {
 // puml: state TorA1 {
 // puml: state " " as _TorA1
-// puml: [*] --> _TorA1
+// puml: [*] -> _TorA1
             if (ch==_separators[S_SEP]) {
 // puml: _TorA1 --> InlineText :"%"
                 _handler.endAttributes();
@@ -1169,7 +1170,7 @@ ex.printStackTrace();
                     setState(new TorA2(getBackState()));
 			}
             else if (ch==_separators[S_CLOSE]) {
-// puml: _TorA1 --> [*] :"}"
+// puml: _TorA1 -> [H] :"}"
                 if (_meta) {
                     endMetaAttributes();
                 }
@@ -1208,7 +1209,7 @@ ex.printStackTrace();
 		public void handle(char ch) {
 // puml: state TorA2 {
 // puml: state " " as _TorA2
-// puml: [*] --> _TorA2
+// puml: [*] -> _TorA2
             if (ch=='\r'||ch=='\n') {
 			}
             else if (ch=='\t') {
@@ -1227,7 +1228,7 @@ ex.printStackTrace();
                     setState(new SElem(new Indent(getBackState(),_indent))); 
 			}
             else if (ch==_separators[S_CLOSE]) {
-// puml: _TorA2 --> [*] :"}"
+// puml: _TorA2 -> [H] :"}"
                 if (_meta) {
                     endMetaAttributes();
                 }
@@ -1264,7 +1265,7 @@ ex.printStackTrace();
 		public void handle(char ch) {
 // puml: state TorA3 {
 // puml: state " " as _TorA3 
-// puml: [*] --> _TorA3
+// puml: [*] -> _TorA3
             if (ch==_separators[S_SEP]) {
 // puml: _TorA3 --> TorA1: %
 					setState(new TorA1(getBackState()));
@@ -1272,7 +1273,7 @@ ex.printStackTrace();
             else if (ch=='\t'||ch==' ') {
 			}
             else if (ch==_separators[S_CLOSE]) {
-// puml: _TorA3 --> [*]
+// puml: _TorA3 -> [H]
                 if (_meta) {
                     endMetaAttributes();
                 }
