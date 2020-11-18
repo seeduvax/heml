@@ -415,29 +415,29 @@ public class Parser implements Runnable {
 // puml: [*] -> _Attr
 		public void handle(char ch) {
 			if (ch=='=') {
-// puml: _Attr --> AttrV :"="
+// puml: _Attr --> AttrV :=
 					_attrName=popAcc();
 					setState(new AttrV(getBackState()));
 			}					
 			else if (ch==_separators[S_SEP]) {
-// puml: _Attr --> TorA1 :"%"
+// puml: _Attr --> TorA1 :%
 					addAttribute();
 					setState(new TorA1(getBackState()));
 			}
 			else if (ch=='\r') {
-// puml: _Attr --> _Attr :"\\r"
+// puml: _Attr --> _Attr :\\r
 			}
 			else if (ch=='\n') {
-// puml: _Attr --> TorA2 :"\\n"
+// puml: _Attr --> TorA2 :\\n
 					addAttribute();
 					setState(new TorA2(getBackState()));
 			}
 			else if (ch==_separators[S_ESC]) {
-// puml: _Attr --> EscChar :"\\"
+// puml: _Attr --> EscChar :\\
 					setState(new EscChar(this));
 			}
 			else if (ch==_separators[S_CLOSE]) {
-// puml: _Attr -> [H] :"}"
+// puml: _Attr -> [*] :}
 				addAttribute();
                 if (_meta) {
                     endMetaAttributes();
@@ -466,24 +466,24 @@ public class Parser implements Runnable {
 		}
 		public void handle(char ch) {
 			if (ch==_separators[S_SEP]) {
-// puml: _AttrV --> TorA1 : "%"
+// puml: _AttrV --> TorA1 : %
 					addAttribute();
 					setState(new TorA1(getBackState()));
 			}
 			else if (ch=='\r') {
-// puml: _AttrV --> _AttrV : "\\r"
+// puml: _AttrV --> _AttrV : \\r
 			}
 			else if (ch=='\n') {
-// puml: _AttrV --> TorA2 : "\\n"
+// puml: _AttrV --> TorA2 : \\n
 					addAttribute();
 					setState(new TorA2(getBackState()));
 			}
 			else if (ch==_separators[S_ESC]) {
-// puml: _AttrV --> EscChar : "\\"
+// puml: _AttrV --> EscChar : \\
 					setState(new EscChar(this));
 			}
 			else if (ch==_separators[S_CLOSE]) {
-// puml: _AttrV -> [H] : "}"
+// puml: _AttrV -> [*] : }
 				addAttribute();
                 if (_meta) {
                     endMetaAttributes();
@@ -509,7 +509,7 @@ public class Parser implements Runnable {
 		}
 		public void handle(char ch) {
 			if (ch==_separators[S_CDATA]) {
-// puml: CData --> ECData : "!"
+// puml: CData --> ECData : !
 					setState(new ECData(getBackState()));
 			}
 			else {
@@ -531,7 +531,7 @@ public class Parser implements Runnable {
 // puml: state " " as _ECData
 // puml: [*] -> _ECData
 			if (ch==_separators[S_CLOSE]) {
-// puml: _ECData -> [H] : "}" 
+// puml: _ECData -> [*] : } 
 					_handler.addCData(popAcc());
 					goBackState();
 			}
@@ -554,7 +554,7 @@ public class Parser implements Runnable {
 		}
 		public void handle(char ch) {
 			if (ch==_separators[S_COMMENT]) {
-// puml: Comment --> EComment : "#"
+// puml: Comment --> EComment : #
 					setState(new EComment(getBackState()));
 			}
 			else {
@@ -576,7 +576,7 @@ public class Parser implements Runnable {
 // puml: state " " as _EComment
 // puml: [*] -> _EComment
 			if (ch==_separators[S_CLOSE]) {
-// puml: _EComment -> [H] : "}"
+// puml: _EComment -> [*] : }
 					_handler.addComment(popAcc());
 					goBackState();
 			}
@@ -601,24 +601,24 @@ public class Parser implements Runnable {
 // puml: state " " as _ElemName
 // puml: [*] -> _ElemName
 			if (ch==_separators[S_SEP]) {
-// puml: _ElemName --> TorA1 : "%"
+// puml: _ElemName --> TorA1 : %
 				openElement();
 				setState(new TorA1(getBackState()));
 			}
 			else if (ch=='\r') {
 			}
 			else if (ch=='\n') {
-// puml: _ElemName --> TorA2 : "\\n"
+// puml: _ElemName --> TorA2 : \\n
 				openElement();
 				setState(new TorA2(getBackState()));
 			}						
 			else if (ch==' ') {
-// puml: _ElemName --> TorA3 : "<sp>"
+// puml: _ElemName --> TorA3 : <sp>
 				openElement();
 				setState(new TorA3(getBackState()));
 			}
 			else if (ch==_separators[S_CLOSE]) {
-// puml: _ElemName -> [H] : "}" 
+// puml: _ElemName -> [*] : } 
                 openElement();
                 if (_meta) {
                     endMetaAttributes();
@@ -647,7 +647,7 @@ public class Parser implements Runnable {
 		}
 		public void handle(char ch) {
 // puml: state EscChar {
-// puml: [*] -> [H]
+// puml: [*] -> [*]
 // puml: }
             switch (ch) {
                 case 't':
@@ -707,7 +707,7 @@ public class Parser implements Runnable {
 // puml: state Indent {
 // puml: state " " as _Indent
 // puml: [*] -> _Indent
-// puml: _Indent --> _Indent : "\\t <sp> \\n"
+// puml: _Indent --> _Indent : \\t<sp>\\n
 			if (ch=='\t') {
 					_indent+=_tabSize;
 			}
@@ -715,7 +715,7 @@ public class Parser implements Runnable {
 					_indent++;
 			}
 			else if (ch==_separators[S_OPEN]) {
-// puml: _Indent --> SElem : "}"
+// puml: _Indent --> SElem : }
                 	checkIndentClosure(IdentAction.Close);
 					setState(new SElem(this));
 			}
@@ -730,7 +730,7 @@ public class Parser implements Runnable {
 					_indent=0;
 			}
 			else if (ch==_separators[S_CLOSE]) {
-// puml: _Indent -> [H] : "}"
+// puml: _Indent -> [*] : }
                 close();
                 _handler.closeElement();
                 goBackState();
@@ -780,13 +780,13 @@ public class Parser implements Runnable {
 			else if (ch=='\n') {
 // puml: state IndentText {
 // puml: state " " as _IndentText
-// puml: _IndentText -> [H] :"\\n}"
+// puml: _IndentText -> [*] :\\n}
 				addText();
                 close();
 				goBackState();
 			}
 			else if (ch==_separators[S_OPEN]) {
-// puml: _IndentText --> SElem :"{"
+// puml: _IndentText --> SElem :{
 				addText();
 				setState(new SElem(this));
 			}
@@ -804,7 +804,7 @@ public class Parser implements Runnable {
                 }
             }
 			else if (ch==_separators[S_ESC]) {
-// puml: _IndentText --> EscChar :"\\"
+// puml: _IndentText --> EscChar :\\
 				setState(new EscChar(this));
 			}
 			else {
@@ -829,17 +829,17 @@ public class Parser implements Runnable {
 // puml: state " " as _InlineText
 // puml: [*] -> _InlineText
 			if (ch==_separators[S_CLOSE]) {
-// puml: _InlineText -> [H] :"}"
+// puml: _InlineText -> [*] :}
                     addText();
 					_handler.closeElement();
                     goBackState();
 			}
 			else if (ch==_separators[S_ESC]) {
-// puml: _InlineText --> EscChar :"\\"
+// puml: _InlineText --> EscChar :\\
 					setState(new EscChar(this));
 			}
 			else if (ch==_separators[S_OPEN]) {
-// puml: _InlineText --> SElem :"{"
+// puml: _InlineText --> SElem :{
                     addText();
 					setState(new SElem(this));
 			}
@@ -867,11 +867,11 @@ public class Parser implements Runnable {
 					setState(new ElemName(getBackState()));
 			}
 			else if (ch==_separators[S_CDATA]) {
-// puml: SElem --> CData :"!"
+// puml: SElem --> CData :!
 					setState(new CData(getBackState()));
 			}
 			else if (ch==_separators[S_COMMENT]) {
-// puml: SElem --> Comment :"#"
+// puml: SElem --> Comment :#
 					setState(new Comment(getBackState()));
 			}
 			else {
@@ -1159,18 +1159,18 @@ ex.printStackTrace();
 // puml: state " " as _TorA1
 // puml: [*] -> _TorA1
             if (ch==_separators[S_SEP]) {
-// puml: _TorA1 --> InlineText :"%"
+// puml: _TorA1 --> InlineText :%
                 _handler.endAttributes();
                 setState(new InlineText(getBackState()));
 			}
             else if (ch=='\r') {
 			}
             else if (ch=='\n') {
-// puml: _TorA1 --> TorA2 :"\\n"
+// puml: _TorA1 --> TorA2 :\\n
                     setState(new TorA2(getBackState()));
 			}
             else if (ch==_separators[S_CLOSE]) {
-// puml: _TorA1 -> [H] :"}"
+// puml: _TorA1 -> [*] :}
                 if (_meta) {
                     endMetaAttributes();
                 }
@@ -1219,16 +1219,16 @@ ex.printStackTrace();
 					_indent++;
 			}
             else if (ch==_separators[S_SEP]) {
-// puml: _TorA2 --> TorA1 :"%"
+// puml: _TorA2 --> TorA1 :%
 					setState(new TorA1(getBackState()));
 			}
             else if (ch==_separators[S_OPEN]) {
-// puml: _TorA2 --> SElem :"{"
+// puml: _TorA2 --> SElem :{
                     endAttributes();
                     setState(new SElem(new Indent(getBackState(),_indent))); 
 			}
             else if (ch==_separators[S_CLOSE]) {
-// puml: _TorA2 -> [H] :"}"
+// puml: _TorA2 -> [*] :}
                 if (_meta) {
                     endMetaAttributes();
                 }
@@ -1273,7 +1273,7 @@ ex.printStackTrace();
             else if (ch=='\t'||ch==' ') {
 			}
             else if (ch==_separators[S_CLOSE]) {
-// puml: _TorA3 -> [H]
+// puml: _TorA3 -> [*]
                 if (_meta) {
                     endMetaAttributes();
                 }
