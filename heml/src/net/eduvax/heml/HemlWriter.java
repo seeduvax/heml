@@ -64,7 +64,7 @@ public class HemlWriter implements ParserCallback {
         _out.println("{#"+comment+"#}");
     }
     public void addCData(String data) {
-        _out.println("{#"+data+"#}");
+        _out.println("{!"+data+"!}");
     }
     public void openDocument() {
     }

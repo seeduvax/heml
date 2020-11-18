@@ -97,6 +97,9 @@ public class Parser implements Runnable {
         else if ("exec".equals(_metaName)) {
             metaCmd=new MetaExec();
         }
+        else if ("extract".equals(_metaName)) {
+            metaCmd=new MetaExtract();
+        }
         if (metaCmd!=null) {
             try {
                 for (String param : _metaArgs.keySet()) {
@@ -939,6 +942,64 @@ public class Parser implements Runnable {
             }
 		}
 	}
+    /**
+     * Extract meta command
+     */ 
+	public class MetaExtract implements MetaCommand {
+        private String _src;
+        private String _from="";
+        private String _to="";
+        public void setParameter(String id, String value) {
+            if ("src".equals(id)) {
+                _src=value;
+            }
+            else if ("from".equals(id)) {
+                _from=value;
+            }
+            else if ("to".equals(id)) {
+                _to=value;
+            }
+        }
+        public void run() {
+            try {
+                BufferedReader in=new BufferedReader(
+                            new InputStreamReader(new FileInputStream(_src)));
+                String line=in.readLine();
+                boolean completed=line==null;
+                boolean inExtract=false;
+                boolean first=true;
+                while (!completed) {
+                    if (inExtract) {
+                        if (!"".equals(_to) && line.contains(_to)) {
+                            completed=true;
+                        }
+                        else {
+                            // TODO copy line...
+                            if (first) {
+                                first=false;
+                            }
+                            else {
+                                _acc.append('\n');
+                            }
+                            _acc.append(line);
+                        }
+                    }
+                    else {
+                        if ("".equals(_from) || line.contains(_from)) {
+                            inExtract=true;
+                        }
+                    }
+                    line=in.readLine();
+                    completed=completed||line==null;
+                }
+                _handler.addCData(popAcc());
+            }
+            catch (Exception ex) {
+                printErr("Trouble while processing extract of "+_src
+                        +": " +ex.getMessage()); 
+            }
+        }
+    }
     /**
      * Exec meta command
      */

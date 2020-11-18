@@ -99,7 +99,25 @@ a	%b	%c	%d	%e	%f
         {plop
             ppppp
             ppppp
+{!System.out.println("-------------------------------");
+        Parser p=getParser("testHEML-Xsl.txt");
+        EH eh=new EH();
+        p.setXslPath("test/test.xsl");
+        p.setErrHandler(eh);
+        assertNull(checkParse(p));
+        assertEquals(2,eh._count);
+System.out.println("-------------------------------");
+        p=getParser("testHEML-Xsl.txt");
+        eh=new EH();
+        p.setXslPath("test/test.xsl");
+        p.setErrHandler(eh);
+        p.addSearchPath("test/plop");
+        assertNull(checkParse(p));
+System.out.println("-------------------------------");
+        assertEquals(1,eh._count);!}
             ppp
+{!command output
+!}
         }
             -  sldkfjs
     }

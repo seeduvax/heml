@@ -76,7 +76,9 @@ a	b	c	d		e
 {plop
     ppppp
     ppppp
+{?extract %src=test/TestHEML.java %from=testXsl %to=\}}
 ppp
+{?exec %cmd=echo command output}
 }
 - sldkfjs
 }
