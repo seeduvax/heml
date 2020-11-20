@@ -966,7 +966,7 @@ public class Parser implements Runnable {
                             new InputStreamReader(new FileInputStream(_src)));
                 String line=in.readLine();
                 boolean completed=line==null;
-                boolean inExtract=false;
+                boolean inExtract="".equals(_from);
                 boolean first=true;
                 while (!completed) {
                     if (inExtract) {
