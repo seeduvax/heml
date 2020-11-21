@@ -39,10 +39,10 @@ Added markdown in the final discussion about the alternate file formats (§{xref
 	- {a %href=api/ %%API documentation}.
 	- {a %href=/websvn/listing.php?repname=Eduvax+Java+Projects&path=/net.eduvax.heml/branches/0.1/ %%Browse source code}.
 	- {a %href=../egpi/1068.html %%Issue tracking}.
-	{section %title=Implementation status
+{section %title=Implementation status
 		- HEML to XML command line filter.
 		- SAX like callback API: use HEML as your native data format.
-		Full changelog is available from {a %href= %%EGPI tasks and issues management}.
+HEML's change requests are managed and track using the ABS' charm feature. This mean you can get issues related to the current branch going into the project's sources root directory and invoke {kw make crls}. For more details about ABS, the tool used to build heml, see its {a %href=https://github.com/seeduvax/AcrobatomaticBuildSystem %%page at github}. 
 	}
 	{section %title=TODO
 		- Improve error handling and reporting.
