@@ -1,0 +1,5 @@
+@import url("style.css");
+div.head {
+	background-image: url('hemllogo.png'), url('eduvax.png');
+}
+
