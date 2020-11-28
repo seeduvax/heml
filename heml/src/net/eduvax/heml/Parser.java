@@ -1005,9 +1005,13 @@ public class Parser implements Runnable {
      */
     public class MetaExec implements MetaCommand {
         private String _cmd;
+        private boolean _output=true;
         public void setParameter (String id, String value) {
             if ("cmd".equals(id)) {
                 _cmd=value;
+            }
+            else if ("ouput".equals(id)&&"false".equals(value)) {
+                _output=false;
             }
         }
         public void run() {
@@ -1029,7 +1033,9 @@ public class Parser implements Runnable {
                         stdout.append('\n');
                     }
                 }
-                _handler.addCData(stdout.toString());
+                if (_output) {
+                    _handler.addCData(stdout.toString());
+                }
             }
             catch (Exception ex) {
                 printErr("Exec error ["+_cmd+"]: "+ex.getMessage());
@@ -1044,6 +1050,7 @@ public class Parser implements Runnable {
 		private String _recordName="tr";
 		private Vector<String> _fieldNames;
 		private String _src=null;
+        private String _cmd=null;
 		private String _recordSep="\n";
 		private String _fieldSep="%";
 		private String _commentChar=null;
@@ -1087,6 +1094,9 @@ public class Parser implements Runnable {
 			else if ("src".equals(id)) {
 				_src=value;
 			}
+			else if ("cmd".equals(id)) {
+				_cmd=value;
+			}
             else if ("style".equals(id)) {
                 _style="attr".equals(value)?ParserCallback.ROW_ATTR:ParserCallback.ROW_ELEM;
             }
@@ -1104,12 +1114,12 @@ public class Parser implements Runnable {
 		public void run() {
             openDoc();
 			_handler.openTable(_style,_recordName,_fieldNames);
+     	    String encoding=(_encoding==null&&_reader!=null)?_reader.getEncoding():_encoding;
+            if (encoding==null) {
+                encoding="utf-8";
+            }
 			if (_src!=null) {
 				try {
-					String encoding=(_encoding==null&&_reader!=null)?_reader.getEncoding():_encoding;
-					if (encoding==null) {
-						encoding="utf-8";
-					}
 					InputStreamReader reader=new InputStreamReader(
 									new FileInputStream(_src),encoding);
 					int ch=reader.read();
@@ -1125,6 +1135,29 @@ public class Parser implements Runnable {
 ex.printStackTrace();					
 				}
 			}
+            else if (_cmd!=null) {
+                try {
+                    Vector<String> cmd=new Vector<String>();
+                    StringTokenizer st=new StringTokenizer(_cmd," ");
+                    while (st.hasMoreTokens()) {
+                        cmd.add(st.nextToken());
+                    }
+                    StringBuffer stdout=new StringBuffer();
+                    ProcessBuilder pb=new ProcessBuilder(cmd);
+                    Process p=pb.start();
+                    InputStreamReader reader=new InputStreamReader(p.getInputStream(),encoding);
+					int ch=reader.read();
+					while(ch>=0) {
+						handle((char)ch);
+					    ch=reader.read();
+					}
+					reader.close();
+                    handleRecord(popAcc());
+                }
+                catch (Exception ex) {
+                    printErr("Exec error in table ["+_cmd+"]: "+ex.getMessage());
+                }
+            }
 			else {
 				_backState=_state;
 				setState(this);
