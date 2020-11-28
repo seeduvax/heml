@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cr id="fd81dd347aef4f47a3888679071c100b632e3f01" state="open">
+<cr id="fd81dd347aef4f47a3888679071c100b632e3f01" state="closed" delivered="heml-1.0.3">
 <title>add option to set xsl search path</title>
 <reporter>Sebastien Devaux</reporter>
 <creation>Sat Sep 7 21:36:14 2019 +0700</creation>
