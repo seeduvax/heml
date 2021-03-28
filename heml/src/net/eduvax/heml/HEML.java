@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -52,6 +53,7 @@ public class HEML {
 			String inputPath="-";
 			String outputPath="-";
 			String xslPath=null;
+            String depFile=null;
             List<String> searchPaths = new ArrayList<>();
             Hashtable<String,String> xslParams=new Hashtable<String,String>();
 			while (i<args.length) {
@@ -66,6 +68,10 @@ public class HEML {
 				else if ("-xsl".equals(args[i])) {
 					i++;
 					xslPath=args[i];
+				}
+				else if ("-dep".equals(args[i])) {
+					i++;
+					depFile=args[i];
 				}
 				else if ("-param".equals(args[i])) {
 					i++;
@@ -102,6 +108,15 @@ public class HEML {
                     parser.addSearchPath(searchPath);                	
                 }
 			}
+            if (depFile!=null) {
+                try {
+                    PrintStream depOut=new PrintStream(new FileOutputStream(depFile));
+                    parser.setDepOut(depOut);
+                }
+                catch (IOException ex) {
+                    System.err.println("Can't create dependency file: "+depFile);
+                }
+            }
             parser.run();
         }
         catch (Exception ex) {

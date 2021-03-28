@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -51,6 +52,7 @@ public class Parser implements Runnable {
     private String _xslPath=null;
     private ByteArrayOutputStream _bufOutput=null;
     private OutputStream _out;
+    private PrintStream _depOut=null;
     private boolean _docOpen=false;
     private ErrHandler _errHandler;
     private List<String> _searchPaths = new ArrayList<>();
@@ -323,6 +325,9 @@ public class Parser implements Runnable {
     }
     public void addSearchPath(String path) {
         _searchPaths.add(path);
+    }
+    public void setDepOut(PrintStream depOut) {
+        _depOut=depOut;
     }
     public void setXslPath(String path) {
         if (_xslPath==null&&_handler==null) {
@@ -933,6 +938,11 @@ public class Parser implements Runnable {
 		public void run() {
             try {
                 Parser incParser=new Parser(_src,_handler);
+                if (_depOut!=null) {
+                    _depOut.println(_streamName+": "+_src);
+                    _depOut.println();
+                    incParser.setDepOut(_depOut);
+                }
                 incParser._docOpen=true;
                 incParser._includedParser=true;
                 incParser.run();
