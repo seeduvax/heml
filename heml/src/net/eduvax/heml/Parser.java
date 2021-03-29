@@ -774,7 +774,6 @@ public class Parser implements Runnable {
 		}
         public void close() {
             if (!_closed) {
-System.out.println("DDDD: IndentText close()");
 				if (_bullet) {
 	  				_handler.closeEnum();
 				}
@@ -825,7 +824,6 @@ System.out.println("DDDD: IndentText close()");
 			else {
 // puml: _IndentText --> _IndentText
 				_acc.append(ch);
-System.out.println("DDDDDD: ["+ch+"]");
 			}
 // puml: }
 		}
@@ -841,11 +839,9 @@ System.out.println("DDDDDD: ["+ch+"]");
             _parent=s;
         }
         public void handle(char ch) {
-System.out.println("DDDD: ["+ch+"]");
             if (ch=='\r') {
             }
             else if (ch=='\n') {
-System.out.println("DDDD: RET");
                 _parent.close();
                 _parent.goBackState();
             }
@@ -853,7 +849,6 @@ System.out.println("DDDD: RET");
                 sb.append(ch);
             }
             else if (ch=='-') {
-System.out.println("DDDD: BULLET");
                 sb.append(ch);
                 _parent.close();
                 _parent.goBackState();
