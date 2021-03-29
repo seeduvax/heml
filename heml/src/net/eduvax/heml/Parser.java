@@ -56,6 +56,7 @@ public class Parser implements Runnable {
     private boolean _docOpen=false;
     private ErrHandler _errHandler;
     private List<String> _searchPaths = new ArrayList<>();
+    private boolean _wrapLines=false;
 
     private enum IdentAction {
     	Close,
@@ -773,6 +774,7 @@ public class Parser implements Runnable {
 		}
         public void close() {
             if (!_closed) {
+System.out.println("DDDD: IndentText close()");
 				if (_bullet) {
 	  				_handler.closeEnum();
 				}
@@ -790,8 +792,13 @@ public class Parser implements Runnable {
 // puml: state " " as _IndentText
 // puml: _IndentText -> [*] :\\n}
 				addText();
-                close();
-				goBackState();
+                if (_wrapLines) {
+                    setState(new ELine(this));
+                }
+                else {
+                    close();
+	    			goBackState();
+                }
 			}
 			else if (ch==_separators[S_OPEN]) {
 // puml: _IndentText --> SElem :{
@@ -818,10 +825,48 @@ public class Parser implements Runnable {
 			else {
 // puml: _IndentText --> _IndentText
 				_acc.append(ch);
+System.out.println("DDDDDD: ["+ch+"]");
 			}
 // puml: }
 		}
 	}
+    /**
+     * End of (wrapped) line
+     */
+    private class ELine extends State {
+        IndentText _parent;
+        StringBuilder sb=new StringBuilder();
+        public ELine(IndentText s) {
+            super(s);
+            _parent=s;
+        }
+        public void handle(char ch) {
+System.out.println("DDDD: ["+ch+"]");
+            if (ch=='\r') {
+            }
+            else if (ch=='\n') {
+System.out.println("DDDD: RET");
+                _parent.close();
+                _parent.goBackState();
+            }
+            else if (ch==' ' || ch=='\t') {
+                sb.append(ch);
+            }
+            else if (ch=='-') {
+System.out.println("DDDD: BULLET");
+                sb.append(ch);
+                _parent.close();
+                _parent.goBackState();
+                for (int i=0;i<sb.length();i++) {
+                    _state.handle(sb.charAt(i));
+                }
+            }
+            else {
+                goBackState();
+                _state.handle(ch);
+            }
+        }
+    } 
 	/**
 	 * Inline element text
 	 */
@@ -919,6 +964,9 @@ public class Parser implements Runnable {
             }
             else if ("xsl".equals(id)) {
                 setXslPath(value);
+            }
+            else if ("line".equals(id)) {
+                _wrapLines="wrap".equals(value);
             }
             else {
                 printErr("Unhandled parameter: "+id);
