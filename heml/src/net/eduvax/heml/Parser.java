@@ -982,8 +982,7 @@ public class Parser implements Runnable {
             try {
                 Parser incParser=new Parser(_src,_handler);
                 if (_depOut!=null) {
-                    _depOut.println(_streamName+": "+_src);
-                    _depOut.println();
+                    _depOut.print(" "+_src);
                     incParser.setDepOut(_depOut);
                 }
                 incParser._docOpen=true;

@@ -108,9 +108,12 @@ public class HEML {
                     parser.addSearchPath(searchPath);                	
                 }
 			}
-            if (depFile!=null) {
+            PrintStream depOut=null;
+            if (depFile!=null && !("-".equals(outputPath))) {
                 try {
-                    PrintStream depOut=new PrintStream(new FileOutputStream(depFile));
+                    depOut=new PrintStream(new FileOutputStream(depFile));
+                    depOut.print(outputPath);
+                    depOut.print(":");
                     parser.setDepOut(depOut);
                 }
                 catch (IOException ex) {
@@ -118,6 +121,10 @@ public class HEML {
                 }
             }
             parser.run();
+            if (depOut!=null) {
+                depOut.println();
+                depOut.println();
+            }
         }
         catch (Exception ex) {
 ex.printStackTrace();		
