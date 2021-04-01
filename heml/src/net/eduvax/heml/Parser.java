@@ -789,9 +789,9 @@ public class Parser implements Runnable {
 			else if (ch=='\n') {
 // puml: state IndentText {
 // puml: state " " as _IndentText
-// puml: _IndentText -> [*] :\\n}
 				addText();
                 if (_wrapLines) {
+// puml: _IndentText --> ELine :\\n
                     setState(new ELine(this));
                 }
                 else {
@@ -839,16 +839,21 @@ public class Parser implements Runnable {
             _parent=s;
         }
         public void handle(char ch) {
+// puml: state ELine {
+// puml: state " " as _ELine
             if (ch=='\r') {
             }
             else if (ch=='\n') {
+// puml: _ELine -> [*] :\\n
                 _parent.close();
                 _parent.goBackState();
             }
             else if (ch==' ' || ch=='\t') {
+// puml: _ELine -> _ELine :<space><tab>
                 sb.append(ch);
             }
             else if (ch=='-') {
+// puml: _ELine -> [*] : -
                 sb.append(ch);
                 _parent.close();
                 _parent.goBackState();
@@ -857,9 +862,13 @@ public class Parser implements Runnable {
                 }
             }
             else {
+// puml: _ELine -> [*]  
                 goBackState();
+                // single \n shall be understand as a space char.
+                _state.handle(' ');
                 _state.handle(ch);
             }
+// puml: }
         }
     } 
 	/**
