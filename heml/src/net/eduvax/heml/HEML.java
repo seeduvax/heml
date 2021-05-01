@@ -32,6 +32,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 import java.util.Stack;
+import java.util.StringTokenizer;
 import org.xml.sax.SAXException;
 
 /**
@@ -56,6 +57,8 @@ public class HEML {
             String depFile=null;
             List<String> searchPaths = new ArrayList<>();
             Hashtable<String,String> xslParams=new Hashtable<String,String>();
+            Hashtable<String,Hashtable<String,String>> depAttrMap=
+                new Hashtable<String,Hashtable<String,String>>();
 			while (i<args.length) {
 				if ("-in".equals(args[i])) {
 					i++;
@@ -72,6 +75,25 @@ public class HEML {
 				else if ("-dep".equals(args[i])) {
 					i++;
 					depFile=args[i];
+				}
+				else if ("-depattr".equals(args[i])) {
+					i++;
+                    StringTokenizer st=new StringTokenizer(args[i],":");
+                    String eName=st.nextToken();
+                    if (st.hasMoreTokens()) {
+                        String aName=st.nextToken();
+                        Hashtable<String,String> map=depAttrMap.get(eName);
+                        if (map==null) {
+                            map=new Hashtable<String,String>();
+                            depAttrMap.put(eName,map);
+                            if (st.hasMoreTokens()) {
+                                map.put(aName,st.nextToken()+"/");
+                            }
+                            else {
+                                map.put(aName,"");
+                            }
+                        }
+                    }
 				}
 				else if ("-param".equals(args[i])) {
 					i++;
@@ -114,7 +136,7 @@ public class HEML {
                     depOut=new PrintStream(new FileOutputStream(depFile));
                     depOut.print(outputPath);
                     depOut.print(":");
-                    parser.setDepOut(depOut);
+                    parser.setDepOut(depOut,depAttrMap);
                 }
                 catch (IOException ex) {
                     System.err.println("Can't create dependency file: "+depFile);

@@ -53,6 +53,8 @@ public class Parser implements Runnable {
     private ByteArrayOutputStream _bufOutput=null;
     private OutputStream _out;
     private PrintStream _depOut=null;
+    private Hashtable<String,Hashtable<String,String>> _elemDepMap=null;
+    private Hashtable<String,String> _attrDepMap=null;
     private boolean _docOpen=false;
     private ErrHandler _errHandler;
     private List<String> _searchPaths = new ArrayList<>();
@@ -327,8 +329,10 @@ public class Parser implements Runnable {
     public void addSearchPath(String path) {
         _searchPaths.add(path);
     }
-    public void setDepOut(PrintStream depOut) {
+    public void setDepOut(PrintStream depOut,
+             Hashtable<String,Hashtable<String,String>> depMap) {
         _depOut=depOut;
+        _elemDepMap=depMap;
     }
     public void setXslPath(String path) {
         if (_xslPath==null&&_handler==null) {
@@ -358,7 +362,11 @@ public class Parser implements Runnable {
         }
         else {
             openDoc();
-		    _handler.openElement(popAcc());
+            String eName=popAcc();
+            if (_elemDepMap!=null) {
+                _attrDepMap=_elemDepMap.get(eName);
+            }
+		    _handler.openElement(eName);
         }    
 	}
 	private String _attrName=null;
@@ -375,7 +383,14 @@ public class Parser implements Runnable {
             _metaArgs.put(aName,popAcc().trim());
         }
         else {
-		    _handler.addAttribute(aName,popAcc().trim());
+            String attrValue=popAcc().trim();
+            if (_depOut!=null && _attrDepMap!=null) {
+                String depPfx=_attrDepMap.get(aName);
+                if (depPfx!=null) {
+                    _depOut.println(" "+depPfx+attrValue);
+                }
+            }
+		    _handler.addAttribute(aName,attrValue);
         }
 		_attrName=null;
 	}
@@ -992,7 +1007,7 @@ public class Parser implements Runnable {
                 Parser incParser=new Parser(_src,_handler);
                 if (_depOut!=null) {
                     _depOut.print(" "+_src);
-                    incParser.setDepOut(_depOut);
+                    incParser.setDepOut(_depOut,_elemDepMap);
                 }
                 incParser._docOpen=true;
                 incParser._includedParser=true;
