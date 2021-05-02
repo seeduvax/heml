@@ -387,7 +387,7 @@ public class Parser implements Runnable {
             if (_depOut!=null && _attrDepMap!=null) {
                 String depPfx=_attrDepMap.get(aName);
                 if (depPfx!=null) {
-                    _depOut.println(" "+depPfx+attrValue);
+                    _depOut.print(" "+depPfx+attrValue);
                 }
             }
 		    _handler.addAttribute(aName,attrValue);
