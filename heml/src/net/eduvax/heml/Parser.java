@@ -1011,6 +1011,10 @@ public class Parser implements Runnable {
                 }
                 incParser._docOpen=true;
                 incParser._includedParser=true;
+                if (_reader!=null) {
+                    incParser._reader=new InputStreamReader(incParser._in,
+                                _reader.getEncoding());
+                }
                 incParser.run();
             }
             catch (Exception ex) {
