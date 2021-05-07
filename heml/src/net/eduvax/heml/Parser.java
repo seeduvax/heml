@@ -1015,6 +1015,7 @@ public class Parser implements Runnable {
                     incParser._reader=new InputStreamReader(incParser._in,
                                 _reader.getEncoding());
                 }
+                incParser._wrapLines=_wrapLines;
                 incParser.run();
             }
             catch (Exception ex) {
