@@ -43,6 +43,10 @@ voir                    }
                     plop
             }
         }
+{#lua generated content#}
+        {luaelem
+lua inner text        }
+        optional content
     }
     {section %a1=derniere section
         dernier paragraphe
@@ -120,5 +124,7 @@ System.out.println("-------------------------------");
 !}
         }
             -  sldkfjs
+    }
+    {fig %src=toto/titi.png
     }
 }

@@ -61,6 +61,8 @@
                 </ul>
             </section>
         </section>
+        <luaelem>lua inner text</luaelem>
+        <p>optional content</p>
     </section>
     <section a1="derniere section">
         <p>dernier paragraphe</p>
@@ -183,4 +185,5 @@ System.out.println("-------------------------------");
             <li> sldkfjs</li>
         </ul>
     </elem>
+    <fig src="toto/titi.png"/>
 </document>

@@ -29,6 +29,25 @@ paragraphe 4 : ce paragraphe contient {b un tag inline} pour {a%href=http://url%
 plop
 }
 }
+{?script
+handler:addComment("lua generated content")
+handler:openElement("luaelem")
+handler:endAttributes()
+handler:addText("lua inner text")
+handler:closeElement()
+?}
+{?script
+hide=parameters:get("option")=="true"
+if hide then
+    parser:activate(false)
+end
+?}
+optional content
+{?script
+if hide then
+    parser:activate(true)
+end
+?}
 }
 {section%derniere section
 	dernier paragraphe

@@ -1,0 +1,18 @@
+{?set %encoding=utf-8}
+{document
+ {title lua scripting example}
+ {section %title=Fibonacci numbers definition
+The n-th fibonacci number is F(n)=F(n-1)-F(n-2) where F(0)=0 and F(1)=1.
+ }
+ {section %title=Fibonacci numbers list
+Here are the 20th first fibonnacci numbers: {?script
+F={0,1}
+handler:addText("0; 1")
+for i=3,20,1
+do
+    F[i]=F[i-1]+F[i-2]
+    handler:addText("; "..tostring(F[i]))
+end
+?}
+ }
+}

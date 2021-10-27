@@ -28,6 +28,11 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.JsePlatform;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+
 public class Parser implements Runnable {
     private int _line=1;
     private int _col=1;
@@ -36,6 +41,7 @@ public class Parser implements Runnable {
 	private InputStream _in;
     private InputStreamReader _reader=null;
 	private ParserCallback _handler;
+    private ParserCallback _cachedHandler=null;
 	private char[] _separators={'{','}','%','#','!','\\','?'};
 	private final static int S_OPEN=0;
 	private final static int S_CLOSE=1;
@@ -59,6 +65,7 @@ public class Parser implements Runnable {
     private ErrHandler _errHandler;
     private List<String> _searchPaths = new ArrayList<>();
     private boolean _wrapLines=false;
+    private Globals _luaVm=JsePlatform.standardGlobals();
 
     private enum IdentAction {
     	Close,
@@ -72,6 +79,7 @@ public class Parser implements Runnable {
         _metaArgs=new Hashtable<String,String>();
     }
 
+
     private void openDoc() {
         if (!_docOpen) {
             _docOpen=true;
@@ -84,6 +92,7 @@ public class Parser implements Runnable {
 				}
             }
             _handler.openDocument();
+            _luaVm.set("handler",CoerceJavaToLua.coerce(_handler));
         }
     }
 
@@ -99,6 +108,9 @@ public class Parser implements Runnable {
 		else if ("table".equals(_metaName)) {
 			metaCmd=new MetaTable();
 		}
+        else if ("script".equals(_metaName)) {
+            metaCmd=new MetaScript();
+        }
         else if ("exec".equals(_metaName)) {
             metaCmd=new MetaExec();
         }
@@ -221,6 +233,8 @@ public class Parser implements Runnable {
     }
 
 	public void run() {
+        _luaVm.set("parser",CoerceJavaToLua.coerce(Parser.this));
+        _luaVm.set("parameters",CoerceJavaToLua.coerce(_parameters));
         try {
     		int ch=_in.read();
 	    	while (ch>=0) {
@@ -768,6 +782,7 @@ public class Parser implements Runnable {
 // puml: }
 		}
 	}
+
 	/**
 	 * Manage indentation
 	 */
@@ -1123,6 +1138,43 @@ public class Parser implements Runnable {
             }
         }
     }  
+
+	/**
+	 * Script meta command
+	 */
+    public class MetaScript extends State implements MetaCommand {
+        StringBuilder _code=new StringBuilder();
+		private State _backState=null;
+        private boolean _isClosing=false;
+		public MetaScript() {
+			super(null);
+		}
+		public void setParameter(String id,String value) {
+            printErr("Unexpected table meta command argument: "+id);
+        }
+		public void run() {
+			_backState=_state;
+			setState(this);
+        }
+		public void handle(char ch) {
+			if (ch==_separators[S_META]) {
+                _isClosing=true;
+            }
+			else if (_isClosing && ch==_separators[S_CLOSE]) {
+                LuaValue l=_luaVm.load(_code.toString());
+                l.call();
+    			setState(_backState.getBackState());
+			}
+			else {
+                if (_isClosing) {
+                    _code.append(_separators[S_META]);
+                    _isClosing=false;
+                }
+				_code.append(ch);
+			}
+		}
+    }
+
 	/**
 	 * Table meta command
 	 */
@@ -1476,8 +1528,41 @@ ex.printStackTrace();
 // puml: }
 		}
 	}
+    
+    public void activate(boolean active) {
+        if (!active && _cachedHandler==null) {
+            _cachedHandler=_handler;
+            _handler=new DummyHandler();
+        }
+        else if (active && _cachedHandler!=null) {
+            _handler=_cachedHandler;
+            _cachedHandler=null;
+        }
+    }
 
     public interface ErrHandler {
         void handle(String streamName,int line,int col,String msg);
+    }
+
+    private class DummyHandler implements ParserCallback {
+        public void openElement(String name) {}
+        public void closeElement(){}
+        public void addAttribute(String name,String value){}
+        public void endAttributes(){}
+        public void addText(String text){}
+        public void openPara(){}
+        public void closePara(){}
+        public void openEnum(){}
+        public void closeEnum(){}
+        public void openIndent(){}
+        public void closeIndent(){}
+        public void addComment(String comment){}
+        public void addCData(String cData){}
+        public void openDocument(){}
+        public void closeDocument(){}
+        public void stateChanged(Parser.State s){}
+        public void openTable(int rowStyle,String rowName,Iterable<String> fieldsName){}
+        public void addRow(Iterable<String> fieldsValue){}
+        public void closeTable(){}
     }
 }

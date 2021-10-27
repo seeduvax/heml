@@ -121,11 +121,11 @@ public class HEML {
 			}
 			// HEML parsing.	
             Parser parser=new Parser(inputPath,output);
+            for (String name : xslParams.keySet()) {
+                 parser.setXslParam(name,xslParams.get(name));
+            }
 			if (xslPath!=null) {
                 parser.setXslPath(xslPath);
-                for (String name : xslParams.keySet()) {
-                    parser.setXslParam(name,xslParams.get(name));
-                }
                 for (String searchPath : searchPaths) {
                     parser.addSearchPath(searchPath);                	
                 }
