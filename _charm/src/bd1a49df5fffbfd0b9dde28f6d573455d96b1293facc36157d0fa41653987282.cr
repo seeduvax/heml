@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cr id="bd1a49df5fffbfd0b9dde28f6d573455d96b1293facc36157d0fa41653987282" state="working">
+<cr id="bd1a49df5fffbfd0b9dde28f6d573455d96b1293facc36157d0fa41653987282" state="resolved">
 <title>markdown like line wrapping mode</title>
 <reporter>sdevaux</reporter>
 <creation>2021-03-29 14:13:17+02:00</creation>
