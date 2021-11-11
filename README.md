@@ -48,7 +48,18 @@ Issue tracking is performed using the change request management feature from
     make test
 ```
 
-See [AcrobatomaticBuildSystem][0] documentation for more details about the build features.
+See [AcrobatomaticBuildSystem][0] documentation for more details about the build
+features.
+
+## Editors
+HEML is used as the main documentation format for few projects managed with
+[ABS][0], in particular my own projects (some are available on [github][1]). To
+edit such document, a vim syntax highlight file is available. See also 
+[fred322][2]'s [plugins][3] for VSCode and Eclipse.
 
 [0]:https://github.com/seeduvax/AcrobatomaticBuildSystem
+[1]:https://github.com/seeduvax?tab=repositories
+[2]:https://github.com/fred322
+[3]:https://github.com/fred322/hemleditor
+
 

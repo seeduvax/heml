@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cr id="98909f676a31bd233bddb91b988eb133acc94186be6ffededa4733a8f8122be9" state="resolved">
+<cr id="98909f676a31bd233bddb91b988eb133acc94186be6ffededa4733a8f8122be9" state="closed" delivered="heml-1.0.10">
 <title>add capability to include fragments of external files</title>
 <reporter>sdevaux</reporter>
 <creation>2020-11-18 15:37:30+01:00</creation>

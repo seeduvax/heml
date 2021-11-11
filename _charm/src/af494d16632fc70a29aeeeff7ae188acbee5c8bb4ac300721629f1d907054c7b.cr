@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><cr id="af494d16632fc70a29aeeeff7ae188acbee5c8bb4ac300721629f1d907054c7b" state="resolved">
+<?xml version="1.0" encoding="UTF-8"?><cr id="af494d16632fc70a29aeeeff7ae188acbee5c8bb4ac300721629f1d907054c7b" state="closed" delivered="heml-1.0.10">
     <title>in-processing scripting</title>
     <reporter>sdevaux</reporter>
     <creation>2020-11-14 14:48:47+01:00</creation>
