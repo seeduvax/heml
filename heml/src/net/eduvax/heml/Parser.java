@@ -13,12 +13,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -66,6 +68,7 @@ public class Parser implements Runnable {
     private List<String> _searchPaths = new ArrayList<>();
     private boolean _wrapLines=false;
     private Globals _luaVm=JsePlatform.standardGlobals();
+    private Hashtable<String,Properties> _dics=new Hashtable<String,Properties>();
 
     private enum IdentAction {
     	Close,
@@ -116,6 +119,12 @@ public class Parser implements Runnable {
         }
         else if ("extract".equals(_metaName)) {
             metaCmd=new MetaExtract();
+        }
+        else if ("dic".equals(_metaName)) {
+            metaCmd=new MetaDictionary();
+        }
+        else if ("k".equals(_metaName)) {
+            metaCmd=new MetaKeyword();
         }
         if (metaCmd!=null) {
             try {
@@ -1175,6 +1184,92 @@ public class Parser implements Runnable {
 		}
     }
 
+    /**
+     * Dictionnary meta command
+     */
+    public class MetaDictionary implements MetaCommand {
+        private String _src=null;
+        private String _name=null;
+        public MetaDictionary() {
+        }
+        public void setParameter (String id, String value) {
+            if ("name".equals(id)) {
+                _name=value;
+            }
+            else if ("src".equals(id)) {
+                _src=value;
+            }
+            else {
+                printErr("Unexpected dictionary meta command argument: "+id);
+            }
+        }
+        public void run() {
+            try {
+                if (_src!=null) {
+                    if (_name==null) {
+                        _name="_dic_"+_dics.size();
+                    }
+                    Properties prop=new Properties();
+                    prop.load(new FileInputStream(_src));
+                    _dics.put(_name,prop);
+                }
+                else {
+                    System.err.println("Dictionary "+_name+" without source attribute ignored.");
+                }
+            }
+            catch (Exception ex) {
+                printErr("Can't load dictionary "+_name+": "+ex.getMessage());
+            }
+        }
+    }
+    /**
+     * Keyword from dictionnary substitution meta command
+     */
+    public class MetaKeyword extends State implements MetaCommand {
+        private String _dicName=null;
+        private State _backState=null;
+        private StringBuilder _kw=new StringBuilder();
+        public MetaKeyword() {
+            super(null);
+        }
+        public void setParameter(String id,String value) {
+            if ("dic".equals(id)) {
+                _dicName=value;
+            }
+            else {
+                printErr("Unexpected dictionary keyword substitution meta command argument: "+id);
+            }
+        }
+        public void run() {
+            _backState=_state;
+            setState(this);
+        }
+        public void handle(char ch) {
+            if (ch==_separators[S_CLOSE]) {
+                String kw=_kw.toString();
+                String value=null;
+                if (_dicName!=null) {
+                    Properties p=_dics.get(_dicName);
+                    if (p!=null) {
+                        value=(String)p.get(kw);
+                    }
+                }
+                else {
+                    for (Enumeration<Properties> ep=_dics.elements(); ep.hasMoreElements() && value==null; ) {
+                        value=(String)ep.nextElement().get(kw);
+                    }
+                }
+                if (value==null) {
+                    value="%% undefined keyword "+kw+" %%";
+                }
+                _handler.addText(value);
+                setState(_backState.getBackState());
+            }
+            else {
+                _kw.append(ch);
+            }
+        }
+    }
 	/**
 	 * Table meta command
 	 */

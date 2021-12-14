@@ -26,8 +26,8 @@ One                }
             tests
             {section %a1=titre de la sous sous section â¬â¬
                 paragraphe 3
-                    -  enumeration 1
-                    -  enumeration 2
+                    -  enumeration un
+                    -  enumeration deux
                         -  enumeration 2.1
                         -  enumeration 2.2
                             - enumeration 2.2.1

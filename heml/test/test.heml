@@ -1,6 +1,7 @@
 {?set %encoding=utf-8
 	%blip=blop
 	%encoding=iso-8859-1}
+{?dic %src=test/dic.properties}
 {document
 {section%titre de la section
 {section%titre de la sous section
@@ -16,8 +17,8 @@ pararaphe 2
 tests
 {section%titre de la sous sous section €€
 paragraphe 3
-- enumeration 1
-- enumeration 2
+- enumeration {?k one}
+- enumeration {?k two}
   - enumeration 2.1
   - enumeration 2.2
     -enumeration 2.2.1
