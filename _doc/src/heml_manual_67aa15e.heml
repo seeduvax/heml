@@ -1,4 +1,4 @@
-{?set %encoding=utf8} 
+{?set %encoding=utf8 %line=wrap} 
 {document 
   {title HEML - Human Editable Markup Language (yet another)}
   {reference 67aa15e}
@@ -7,49 +7,91 @@
   {abstract HEML is a lightweight markup language designed to be as versatile and generic than XML but also as easy to edit than markdown using only simple test file editor.}
   {keyword XML, markup language, document, file format}
   {history 
-    {edition %version=2 %data=2020-11-21 
-Added introduction to extract and exec meta commands (§{xref SecExtract} §{xref SecExec}).
-Added markdown in the final discussion about the alternate file formats (§{xref SecMarkdown}).
+    {edition %version=3 %date=2021-12-20
+Document layout.
+
+Added meta commands (§{xref SecMeta}): script (§{xref SecScript}), dictionary (dic & k, §{xref SecDic}).
     }
-    {edition %version=1 %data=2012-12-02 %%First issue}
+    {edition %version=2 %date=2020-11-21 
+Added introduction to extract and exec meta commands (§{xref SecExtract}
+§{xref SecExec}).
+Added markdown in the final discussion about the alternate file formats 
+(§{xref SecMarkdown}).
+    }
+    {edition %version=1 %date=2012-12-02 %%First issue}
   }
 {section %title=Presentation
 	{section %title=Why HEML
-		XML files, while growing, can quickly become very difficult to edit using an average text editor or even a more advanced software development advanced editor. Graphical XML editors are very efficient to update a few attributes or elements but are not comfortable for long writing sessions.
-		Rich editors and modern word processing applications are very efficient to edit some well defined XML formats such as docbook and xhtml but are quite difficult to configure to any user format. Wiki formats (wkiktext, confluence, and others) are by designed efficient for on line ASCII editing then easy to handle with any text editor. But those formats are not as generic than XML and are not very helpful for anything else than document editing.
-		HEML design is inspired from wikitext but targets to be functionnaly equivalent to XML and allow editing of any kind of data, not only documents for human readers.
-		More than just a document format, combination of the include and table feature will help to migrate legacy data format (for now limited to ASCII format) to XML. Then the HEML processor performs as a revers XLS processor able to support easy translation from ASCII more or less delimited files to XML.
-		Because readable, it is as easy to track change, merge, than programming language source code, and software development tools can support HEML management, in particular build tools (make) and SCM (subversion, git, ...).
+XML files, while growing, can quickly become very difficult to edit using an
+average text editor or even a more advanced software development advanced
+editor. Graphical XML editors are very efficient to update a few attributes or
+elements but are not comfortable for long writing sessions.
+
+Rich editors and modern word processing applications are very efficient to edit
+some well defined XML formats such as docbook and xhtml but are quite difficult
+to configure to any user format. Wiki formats (wkiktext, confluence, and others)
+are by designed efficient for on line ASCII editing then easy to handle with any
+text editor. But those formats are not as generic than XML and are not very
+helpful for anything else than document editing.
+
+HEML design is inspired from wikitext but targets to be functionnaly equivalent
+to XML and allow editing of any kind of data, not only documents for human
+readers.
+
+More than just a document format, combination of the include and table feature
+will help to migrate legacy data format (for now limited to ASCII format) to
+XML. Then the HEML processor performs as a revers XLS processor able to support
+easy translation from ASCII more or less delimited files to XML.
+
+Because readable, it is as easy to track change, merge, than programming
+language source code, and software development tools can support HEML
+management, in particular build tools (make) and SCM (subversion, git, ...).
 	}
 	{section %title=Yet another markup language (that is not YAML)
-		Main features are:
-		- More concise, then less characters to type
-		- As generic as XML: can express rich structured (hierarchical) information in a same manner.
-		- Handles simple layouts (paragraph, indents and bullets) as wiki text.
-		- Big documents are still readable directly from ASCII tools. Consider using your preferred syntax highlighter to gain more readability (a vim syntax file example is include in source HEML distribution). 
+Main features are:
+  - More concise, then less characters to type
+  - As generic as XML: can express rich structured (hierarchical) information in
+    a same manner.
+  - Handles simple layouts (paragraph, indents and bullets) as wiki text.
+  - Big documents are still readable directly from ASCII tools. Consider using
+    your preferred syntax highlighter to gain more readability (a vim syntax 
+    file example is include in source HEML distribution). 
 	}
 	{section %title=Drawbacks
-		While processing, some layout information may be lost. Then, after automatic processing, it is not always possible to restore a document that is still optimised for human edition.
-		In a same way, some layout and special features are lost when translating document to XML format and the exact reverse process can't be realized.
-		Those two drawbacks make HEML a human editable Only markup language.
+While processing, some layout information may be lost. Then, after automatic
+processing, it is not always possible to restore a document that is still
+optimised for human edition.
+
+In a same way, some layout and special features are lost when translating
+document to XML format and the exact reverse process can't be realized.
+
+Those two drawbacks make HEML a human editable Only markup language.
 	}
 }
 {section %title=Java implentation
-	- {a %href=../dist/net.eduvax.heml %%Download}.
-	- {a %href=api/ %%API documentation}.
-	- {a %href=/websvn/listing.php?repname=Eduvax+Java+Projects&path=/net.eduvax.heml/branches/0.1/ %%Browse source code}.
-	- {a %href=../egpi/1068.html %%Issue tracking}.
+  - {a %href=../dist/net.eduvax.heml %%Download}.
+  - {a %href=api/ %%API documentation}.
+  - {a %href=/websvn/listing.php?repname=Eduvax+Java+Projects&path=/net.eduvax.heml/branches/0.1/ %%Browse source code}.
+  - {a %href=../egpi/1068.html %%Issue tracking}.
 {section %title=Implementation status
-		- HEML to XML command line filter.
-		- SAX like callback API: use HEML as your native data format.
-HEML's change requests are managed and track using the ABS' charm feature. This mean you can get issues related to the current branch going into the project's sources root directory and invoke {kw make crls}. For more details about ABS, the tool used to build heml, see its {a %href=https://github.com/seeduvax/AcrobatomaticBuildSystem %%page at github}. 
+  - HEML to XML command line filter.
+  - SAX like callback API: use HEML as your native data format.
+
+HEML's change requests are managed and track using the ABS' charm feature. This
+mean you can get issues related to the current branch going into the project's
+sources root directory and invoke {kw make crls}. For more details about ABS,
+the tool used to build heml, see its {a
+%href=https://github.com/seeduvax/AcrobatomaticBuildSystem %%page at github}. 
 	}
 	{section %title=TODO
-		- Improve error handling and reporting.
-		- Special characters handling
-		- Improve HEML writer (try to get closer to some reversible HEML/XML translation)
-		- Android port including XSL processor to turn any android device to a rich notepad producing publishable structured data.
-		- Advanced tables: add fixed size field without delimiter and binary file support to the table feature. This will turn HEML to a generic legacy data format to XML converter.
+  - Improve error handling and reporting.
+  - Special characters handling
+  - Improve HEML writer (try to get closer to some reversible HEML/XML translation)
+  - Android port including XSL processor to turn any android device to a rich 
+    notepad producing publishable structured data.
+  - Advanced tables: add fixed size field without delimiter and binary file
+    support to the table feature. This will turn HEML to a generic legacy data
+    format to XML converter.
 	}
 }
 {section %title=More features, XML mapping and examples
@@ -61,24 +103,20 @@ HEML's change requests are managed and track using the ABS' charm feature. This 
 	}
 	{tr
 		{td
-		{!
-{root
+{!{root
 	{elem %attr=value}
 	{elem %attr=value %attr2=value2
 		{subelem text}
 	}
-}
-		!}
+}!}
 		}
 		{td
-		{!
-<root>
+{!<root>
 	<elem attr="value"/>
 	<elem attr="value" attr2="value2">
 		<subelem>text</subelem>
 	</elem>
-</root>
-		!}
+</root>!}
 		}
 	}
 }
@@ -91,19 +129,16 @@ HEML's change requests are managed and track using the ABS' charm feature. This 
 	}
 	{tr
 		{td
-		{!
-{section %title=paragraph layout example
+{!{section %title=paragraph layout example
 paragraph
 paragraph
-- bullet
-- bullet
-	- sub bullet
-}
-		!}
+  - bullet
+  - bullet
+    - sub bullet
+}!}
 		}
 		{td
-		{!
-<section title="paragraph layout example">
+{!<section title="paragraph layout example">
 	<p>paragraph</p>
 	<p>paragraph</p>
 	<li>bullet</li>
@@ -111,19 +146,32 @@ paragraph
 	<ul>
 		<li>bullet</li>
 	</ul>
-</section>
-		!}
+</section>!}
 		}
 	}
 }
 	}
-	{section %title=Parser commands
-		Element's names starting with '?' character are handled as parser command. Currently supported commands are:
-		- ?set : changes parser settings, possible related attributes are:
-			- %encoding: specify which character encoding to use to parse the file.
-			- %tab: defines the character count for one tab character while text computing indentation levels (see paragraph layout examples above).
-		- ?include: includes (and parse) another HEML file in place of the include command. File to include is specified using the %src attribute with relative path or absolute URL.
-		- ?table: includes or defines in-line tabular data (that is ASCII delimited data such as CSV format). More table examples are provided below.
+	{section %title=Parser meta commands %xref=SecMeta
+Element's names starting with '?' character are handled as parser command.
+Currently supported commands are:
+  - {kw set}: changes parser settings, possible related attributes are:
+    - {kw encoding}: specify which character encoding to use to parse the file.
+    - {kw tab}: defines the character count for one tab character while text
+      computing indentation levels (see paragraph layout examples above).
+    - {kw line}: when set to {kw wrap}, activated the line wrap mode where a
+      paragraph can be split over many lines, and an empty line is needed to
+      mark the end of a paragraph (same behavior than markdown).
+  - {kw include}: includes (and parse) another HEML file in place of the include
+    command. File to include is specified using the %src attribute with
+    relative path or absolute URL.
+  - {kw table}: includes or defines in-line tabular data (that is ASCII delimited
+    data such as CSV format). More table examples are provided below.
+  - {kw exec}: Exec system command defined with the {kw cmd} attribute and 
+    insert what the command prints to its standard output.
+  - {kw script}: run enclosed script. At the time this sentence is written, only
+    lua language is supported.
+  - {kw dic}: import a dictionary from a property file.
+  - {kw k}: keyword/value substitution from previously imported dictionary. 
 	}
 	{section %title=Includes
 {table
@@ -229,16 +277,32 @@ paragraph
 }
 	}
 	{section %title=Tables
-	The HEML table feature let concise tabular data writing and also import legacy CSV files. Some attributes are available to configure the parser behavior to handle the table content:
-	- %encoding: name of character encoding to use when reading imported table. This parameter must be be use in combination with %src attribute.
-	- %fields: name of the fields container elements or attributes. When only one name is provided, all fields have the same name unless %style is set to "attr". Default field name is "td".
-	- %fieldSep: list of characters to consider as field separator in the following table definition. Default separator character is "%".
-	- %record: name of the record container elements. Default record name is "tr".
-	- %recordSep: list of characters to consider as record separator in the following table definition. Default separator character is "\\n" (carriage return).
-	- %src: if set, its value is used as path or URL to specify file to import as table content. Default is undefined, then table content is expected.
-	- %style: if value is "attr", fields are expanded as record element's attribute, other wise as sub elements. Default behaviour is to create sub elements.
-	- %token: when set to "true", fields are extracted like StringTokenizer java class does. E.g. Adjacent separator characters are considered as a single one. Default value of this attribute is "false".
-	- %trim: when "true", leading and ending blank characters (space, tabs, ...) are removed from extracted fields. Default value of this attribute is "true".
+The HEML table feature let concise tabular data writing and also import legacy
+CSV files. Some attributes are available to configure the parser behavior to
+handle the table content:
+  - %encoding: name of character encoding to use when reading imported table.
+    This parameter must be be use in combination with %src attribute.
+  - %fields: name of the fields container elements or attributes. When only one
+    name is provided, all fields have the same name unless %style is set to
+    "attr". Default field name is "td".
+  - %fieldSep: list of characters to consider as field separator in the
+    following table definition. Default separator character is "%".
+  - %record: name of the record container elements. Default record name is
+    "tr".
+  - %recordSep: list of characters to consider as record separator in the
+    following table definition. Default separator character is "\\n"
+    (carriage return).
+  - %src: if set, its value is used as path or URL to specify file to import as
+    table content. Default is undefined, then table content is expected.
+  - %style: if value is "attr", fields are expanded as record element's
+    attribute, other wise as sub elements. Default behaviour is to create sub
+    elements.
+  - %token: when set to "true", fields are extracted like StringTokenizer
+    java class does. E.g. Adjacent separator characters are considered as
+    a single one. Default value of this attribute is "false".
+  - %trim: when "true", leading and ending blank characters (space, tabs,
+    ...) are removed from extracted fields. Default value of this attribute is
+    "true".
 {table
 	{tr 
 		{th HEML}
@@ -367,37 +431,131 @@ a;b;c;d;e;f
 	}
 }	
 	}
+	{section %title=Lua scripting %xref=SecScript
+Lua scripts can be inserted and the document structure handler is bound to the
+lua context.
+{table
+ {tr
+   {th HEML}{th XML}
+ }
+ {tr
+   {td
+{!{root
+{?script
+cpt=1
+while cpt<=3 do
+  handler:openElement("elem")
+  handler:endAttributes()
+  handler:addText("entry "..cpt)
+  handler:closeElement()
+end
+?}
+}!}
+   }
+   {td
+{!<root>
+  <elem>entry 1</entry>
+  <elem>entry 2</entry>
+  <elem>entry 3</entry>
+</root>!}
+   }
+ }
+}
+        }
+	{section %title=Dictionary and keyword substitution %xref=SecDic
+{table
+ {tr
+   {th HEML}{th XML}
+ }
+ {tr
+   {td
+{!{?dic %src=kw.properties}
+{root
+  {elem
+    {?k one}
+  }
+  {elem
+    {? two}
+  }
+}!}
+Where {kw kw.properties} stores few keywords.
+{!one=first sentence
+two=second sentence!}
+   }
+   {td
+{!<root>
+   <elem>first sentence</elem>
+   <elem>second sentence</elem>
+</root>!}
+   }
+ }
+}
+	}
 	{section %title=Miscellaneous features
-	- comments: text between \{\# and \#\} is ignored by the parser.
-	- as-is copy: text between \{\! and \!\} is not interpreted and forwarded unchanged to the output inside au <pre> element.
-	- escape character: any character following \\ is forwarded to output as-is. Useful to include some of the HEML control char such as \{ into one element's text.   
-	- SAX-like callback API: the current java implementation can be used as a library and programmer can define its own HEML handler by implementing the {a %href=api/net/eduvax/heml/ParserCallback.html %%ParserCallback interface}.
-	- See this page's {a %href=/websvn/listing.php?repname=Eduvax+Java+Projects&path=/net.eduvax.heml/branches/0.1/src/doc/index.heml %%HEML source file} to see a complete use example.
-	- syntax highlight: markup is simple then syntax highlighting configuration should be easy for common editors. A {a %href=/websvn/listing.php?repname=Eduvax+Java+Project&path=/net.eduvax.heml/branches/0.1/src/heml.vim %%syntax highlight vim script} is included in HEML parser source distribution as an example.
+  - comments: text between \{\# and \#\} is ignored by the parser.
+  - as-is copy: text between \{\! and \!\} is not interpreted and forwarded
+    unchanged to the output inside au <pre> element.
+  - escape character: any character following \\ is forwarded to output as-is.
+    Useful to include some of the HEML control char such as \{ into one
+    element's text.   
+  - SAX-like callback API: the current java implementation can be used as a
+    library and programmer can define its own HEML handler by implementing the
+    {a %href=api/net/eduvax/heml/ParserCallback.html %%ParserCallback interface}.
+  - See this page's {a %href=/websvn/listing.php?repname=Eduvax+Java+Projects&path=/net.eduvax.heml/branches/0.1/src/doc/index.heml %%HEML source file} to see a complete use example.
+  - syntax highlight: markup is simple then syntax highlighting configuration
+    should be easy for common editors. A {a %href=/websvn/listing.php?repname=Eduvax+Java+Project&path=/net.eduvax.heml/branches/0.1/src/heml.vim %%syntax highlight vim script}
+    is included in HEML parser source distribution as an example.
 	}
 }
 {section %title=Similar formats discussion
 	{section %title=Markdown %xref=SecMarkdown
-Markdown is a precursor and may be the most popular lightweight and practical example of a lightweight document format designed to be edited with simple test file editor tools. But markdown is only supporting (simple) document and was not designed to be used to serialize any kind of data like XML is. HEML was inspired by markdown for paragraph and bullet list layout. But for anything else, it is closer to XML itself.
+Markdown is a precursor and may be the most popular lightweight and practical
+example of a lightweight document format designed to be edited with simple test
+file editor tools. But markdown is only supporting (simple) document and was not
+designed to be used to serialize any kind of data like XML is. HEML was inspired
+by markdown for paragraph and bullet list layout. But for anything else, it is
+closer to XML itself.
 	}
 	{section %title=Wiki markups
-	Wiki markups are designed to allow easy in line edition from a simple text field. But the purpose is first to support documents writing. Trying to edit any kind of data like with XML is probably possible but leads to some kind of {a %href=http://en.wikipedia.org/wiki/Brainfuck%%brainfuck} like naming and coding convention above the standard markups to make any data processable.
-	See {a %href=http://en.wikipedia.org/wiki/Wiki_markup%%Wiki markup wikipedia page} to know more about the many wiki markup languages.
+Wiki markups are designed to allow easy in line edition from a simple text
+field. But the purpose is first to support documents writing. Trying to edit any
+kind of data like with XML is probably possible but leads to some kind of {a
+%href=http://en.wikipedia.org/wiki/Brainfuck%%brainfuck} like naming and coding
+convention above the standard markups to make any data processable.
+
+See {a %href=http://en.wikipedia.org/wiki/Wiki_markup%%Wiki markup wikipedia page}
+to know more about the many wiki markup languages.
 	}
 	{section %title=YAML
-	YAML's basic purpose is very similar to HEML's one: enabling easy manual data edition. But it's primary focus is data, and promote lists to handle data. May be I didn't realized what YAML is before I started coding HEML. I just found YAML was not what I searched and hope HEML is more convenient particularly for documents writing. At least it is the case for me!
-	See also {a %href=http://yaml.org%%YAML home page}.
+YAML's basic purpose is very similar to HEML's one: enabling easy manual data
+edition. But it's primary focus is data, and promote lists to handle data. May
+be I didn't realized what YAML is before I started coding HEML. I just found
+YAML was not what I searched and hope HEML is more convenient particularly for
+documents writing. At least it is the case for me!
+
+See also {a %href=http://yaml.org%%YAML home page}.
 	}
 	{section %title=txt2tags
-	Txt2tags can be view as wiki markup precursor and suffers the same limitation when used to edit data that are not readable documents. 
+Txt2tags can be view as wiki markup precursor and suffers the same limitation
+when used to edit data that are not readable documents. 
+
+See also {a %href=http://txt2tags.org%%txt2tags home page}. 
 	}
-	See also {a %href=http://txt2tags.org%%txt2tags home page}. 
 	{section %title=JSON
-	JSON features are very close to YAML and like YAML seems more focused to complex data serialization support and not best suited to direct and manual document edition. It is directly related to javascript, even it is usable with any programming language thanks to the many libraries available.
-	See also {a %href=http://json.org%%JSON home page}.
+JSON features are very close to YAML and like YAML seems more focused to complex
+data serialization support and not best suited to direct and manual document
+edition. It is directly related to javascript, even it is usable with any
+programming language thanks to the many libraries available.
+
+See also {a %href=http://json.org%%JSON home page}.
 	}
 	{section %title=XML
-	Of course, you can edit directly {a %href=http://www.xml.org%%XML}, HTML, XHTML... But it's quite boring because of its heavy markup (opening and ending tags, < and > for each, quotes for attributes). HEML is the same but requires fewer markups then less characters to type. Moreover, paragraph layout feature inspired from markdown, wiki markups and txt2tags keeps HEML document accessible to the human eye.
+Of course, you can edit directly {a %href=http://www.xml.org%%XML}, HTML,
+XHTML... But it's quite boring because of its heavy markup (opening and ending
+tags, < and > for each, quotes for attributes). HEML is the same but requires
+fewer markups then less characters to type. Moreover, paragraph layout feature
+inspired from markdown, wiki markups and txt2tags keeps HEML document accessible
+to the human eye.
 	}
 }
 }
