@@ -69,21 +69,25 @@ Those two drawbacks make HEML a human editable Only markup language.
 	}
 }
 {section %title=Java implentation
-  - {a %href=../dist/net.eduvax.heml %%Download}.
-  - {a %href=api/ %%API documentation}.
-  - {a %href=/websvn/listing.php?repname=Eduvax+Java+Projects&path=/net.eduvax.heml/branches/0.1/ %%Browse source code}.
-  - {a %href=../egpi/1068.html %%Issue tracking}.
+{section %title=Links
+  - {a %href=http://www.eduvax.net/dist/noarch/heml-1.0.10.jar %%Download}.
+  - {a %href=https://github.com/seeduvax/heml/ %%Browse source code}.
+}
 {section %title=Implementation status
-  - HEML to XML command line filter.
+The main implemented features are:
+  - HEML to XML command line filter: simple executable to process files or
+    standard output and output streams, including or not an XSL stylesheet to
+    be chained to the HEML format processing.
   - SAX like callback API: use HEML as your native data format.
-
+}
+{section %title=Changes requests and bug tracking
 HEML's change requests are managed and track using the ABS' charm feature. This
 mean you can get issues related to the current branch going into the project's
 sources root directory and invoke {kw make crls}. For more details about ABS,
 the tool used to build heml, see its {a
 %href=https://github.com/seeduvax/AcrobatomaticBuildSystem %%page at github}. 
 	}
-	{section %title=TODO
+	{section %title=Considered additional features
   - Improve error handling and reporting.
   - Special characters handling
   - Improve HEML writer (try to get closer to some reversible HEML/XML translation)
@@ -103,20 +107,22 @@ the tool used to build heml, see its {a
 	}
 	{tr
 		{td
+{code
 {!{root
 	{elem %attr=value}
 	{elem %attr=value %attr2=value2
 		{subelem text}
 	}
-}!}
+}!}}
 		}
 		{td
+{code %language=xml
 {!<root>
 	<elem attr="value"/>
 	<elem attr="value" attr2="value2">
 		<subelem>text</subelem>
 	</elem>
-</root>!}
+</root>!}}
 		}
 	}
 }
@@ -129,15 +135,17 @@ the tool used to build heml, see its {a
 	}
 	{tr
 		{td
+{code
 {!{section %title=paragraph layout example
 paragraph
 paragraph
   - bullet
   - bullet
     - sub bullet
-}!}
+}!}}
 		}
 		{td
+{code %language=xml
 {!<section title="paragraph layout example">
 	<p>paragraph</p>
 	<p>paragraph</p>
@@ -146,7 +154,7 @@ paragraph
 	<ul>
 		<li>bullet</li>
 	</ul>
-</section>!}
+</section>!}}
 		}
 	}
 }
@@ -182,29 +190,27 @@ Currently supported commands are:
 	{tr
 		{td
 FileA.heml:
-		{!
-{section %title=include example
+{code
+{!{section %title=include example
 paragraph
 {?include %src=FileB.heml}
 paragraph
-}
-		!}
+}!}}
 FileB.heml:		
-		{!
-included paragraph
-included paragraph
-		!}
+{code
+{!included paragraph
+
+included paragraph!}}
 		}
 		{td
-		{!
-<?xml version="1.0"?>		
+{code
+{!<?xml version="1.0"?>		
 <section title="include example">
 	<p>paragraph</p>
 	<p>included paragraph</p>
 	<p>included paragraph</p>
 	<p>paragraph</p>
-</section>
-		!}
+</section>!}}
 		}
 	}
 }
@@ -218,27 +224,27 @@ included paragraph
 	{tr
 		{td
 FileA.heml:
-		{!
-{section %title=include example
+{code
+{!{section %title=include example
 paragraph
 {?extract %src=ParserCallback.java %from=interface %to=ROW_ELEM}
 paragraph
-}
-		!}
-FileB.heml:		
+}!}}
+ParserCallback.java:		
+{code
 {?extract %src=../heml/src/net/eduvax/heml/ParserCallback.java}
+}
 		}
 		{td
-		{!
-<?xml version="1.0"?>		
+{code %language=xml
+{!<?xml version="1.0"?>		
 <section title="include example">
 	<p>paragraph</p>
 <pre>!}
 {?extract %src=../heml/src/net/eduvax/heml/ParserCallback.java %from=interface %to=ROW_ELEM}
 {!</pre>
 	<p>paragraph</p>
-</section>
-		!}
+</section>!}}
 		}
 
 	}
@@ -253,25 +259,23 @@ FileB.heml:
 	{tr
 		{td
 FileA.heml:
-		{!
-{section %title=include example
+{code
+{!{section %title=include example
 paragraph
 {?exec %cmd=ls -al}
 paragraph
-}
-		!}
+}!}}
 		}
 		{td
-		{!
-<?xml version="1.0"?>		
+{code %language=xml
+{!<?xml version="1.0"?>		
 <section title="include example">
 	<p>paragraph</p>
 <pre>!}
 {?exec %cmd=ls -al}
 {!</pre>
 	<p>paragraph</p>
-</section>
-		!}
+</section>!}}
 		}
 	}
 }
@@ -280,29 +284,30 @@ paragraph
 The HEML table feature let concise tabular data writing and also import legacy
 CSV files. Some attributes are available to configure the parser behavior to
 handle the table content:
-  - %encoding: name of character encoding to use when reading imported table.
-    This parameter must be be use in combination with %src attribute.
-  - %fields: name of the fields container elements or attributes. When only one
-    name is provided, all fields have the same name unless %style is set to
-    "attr". Default field name is "td".
-  - %fieldSep: list of characters to consider as field separator in the
+  - {kw encoding}: name of character encoding to use when reading imported table.
+    This parameter must be be use in combination with {kw src} attribute.
+  - {kw fields}: name of the fields container elements or attributes. When only one
+    name is provided, all fields have the same name unless {kw style} is set to
+    {kw attr}. Default field name is {kw td}.
+  - {kw fieldSep}: list of characters to consider as field separator in the
     following table definition. Default separator character is "%".
-  - %record: name of the record container elements. Default record name is
-    "tr".
-  - %recordSep: list of characters to consider as record separator in the
+  - {kw record}: name of the record container elements. Default record name is
+    {kw tr}.
+  - {kw recordSep}: list of characters to consider as record separator in the
     following table definition. Default separator character is "\\n"
     (carriage return).
-  - %src: if set, its value is used as path or URL to specify file to import as
+  - {kw src}: if set, its value is used as path or URL to specify file to import as
     table content. Default is undefined, then table content is expected.
-  - %style: if value is "attr", fields are expanded as record element's
+  - {kw style}: if value is {kw attr}, fields are expanded as record element's
     attribute, other wise as sub elements. Default behaviour is to create sub
     elements.
-  - %token: when set to "true", fields are extracted like StringTokenizer
+  - {kw token}: when set to {kw true}, fields are extracted like StringTokenizer
     java class does. E.g. Adjacent separator characters are considered as
-    a single one. Default value of this attribute is "false".
-  - %trim: when "true", leading and ending blank characters (space, tabs,
+    a single one. Default value of this attribute is {kw false}.
+  - {kw trim}: when {kw true}, leading and ending blank characters (space, tabs,
     ...) are removed from extracted fields. Default value of this attribute is
-    "true".
+    {kw true}.
+
 {table
 	{tr 
 		{th HEML}
@@ -310,17 +315,16 @@ handle the table content:
 	}
 	{tr
 		{td
-		{!
-{?table %record=tableRowName %fields=field1,field2,field3
+{code
+{!{?table %record=tableRowName %fields=field1,field2,field3
 un		% un1		% un2
 deux	% deux1	%	% deux3
 trois	% trois1	% trois2 % trois3
-}		
-		!}
+}!}}
 		}
 		{td
-		{!
-<tableRowName>
+{code %language=xml
+{!<tableRowName>
 	<field1>un</field1>
 	<field2>un1</field2>
 	<field3>un2</field3>
@@ -336,42 +340,38 @@ trois	% trois1	% trois2 % trois3
 	<field2>trois1</field2>
 	<field3>trois2</field3>
 	<f1>trois3</f1>
-</tableRowName>
-		!}
+</tableRowName>!}}
 		}
 	}
 	{tr
 		{td
-		{!
-{?table %record=tableRowName %style=attr %fields=field1,field2,field3
+{code
+{!{?table %record=tableRowName %style=attr %fields=field1,field2,field3
 un		% un1		% un2
 deux	%% deux2		% deux3
 trois	% trois1	% trois2 % trois3
 quatre	% quatre1
-}
-		!}
+}!}}
 		}
 		{td
-		{!
-<tableRowName field1="un" field2="un1" field3="un2"/>
+{code %language=xml
+{!<tableRowName field1="un" field2="un1" field3="un2"/>
 <tableRowName field1="deux" field2="" field3="deux2">deux3</tableRowName>
 <tableRowName field1="trois" field2="trois1" field3="trois2">trois3</tableRowName>
-<tableRowName field1="quatre" field2="quatre1"/>		
-		!}
+<tableRowName field1="quatre" field2="quatre1"/>!}}
 		}
 	}
 	{tr
 		{td
-		{!
-{?table %fieldSep=" \t" %token=true
+{code
+{!{?table %fieldSep=" \t" %token=true
 a	b	c	d		e
 1	        2	3	4
-}
-		!}
+}!}}
 		}
 		{td
-		{!
-<tr>
+{code %language=xml
+{!<tr>
 	<td>a</td>
 	<td>b</td>
 	<td>c</td>
@@ -383,27 +383,24 @@ a	b	c	d		e
 	<td>2</td>
 	<td>3</td>
 	<td>4</td>
-</tr>		
-		!}
+</tr>!}}
 		}
 	}
 	{tr
 		{td
 From one HEML file:		
-		{!
-{?table %src=test.csv %fieldSep=;}
-		!}
+{code
+{!{?table %src=test.csv %fieldSep=;}!}}
 Included csv file:		
-		{!
-1;2;3;4;5;
+{code
+{!1;2;3;4;5;
 ;;;;;
 ;;III;;V;
-a;b;c;d;e;f
-		!}
+a;b;c;d;e;f!}}
 		}
 		{td
-		{!
-<tr>
+{code %language=xml
+{!<tr>
 	<td>1</td>
 	<td>2</td>
 	<td>3</td>
@@ -425,8 +422,7 @@ a;b;c;d;e;f
 	<td>d</td>
 	<td>e</td>
 	<td>f</td>
-</tr>		
-		!}
+</tr>!}}
 		}
 	}
 }	
@@ -440,6 +436,7 @@ lua context.
  }
  {tr
    {td
+{code
 {!{root
 {?script
 cpt=1
@@ -450,14 +447,15 @@ while cpt<=3 do
   handler:closeElement()
 end
 ?}
-}!}
+}!}}
    }
    {td
+{code %language=xml
 {!<root>
   <elem>entry 1</entry>
   <elem>entry 2</entry>
   <elem>entry 3</entry>
-</root>!}
+</root>!}}
    }
  }
 }
@@ -469,6 +467,7 @@ end
  }
  {tr
    {td
+{code
 {!{?dic %src=kw.properties}
 {root
   {elem
@@ -477,16 +476,18 @@ end
   {elem
     {? two}
   }
-}!}
-Where {kw kw.properties} stores few keywords.
+}!}}
+Where {kw kw.properties} stores few keywords:
+{code
 {!one=first sentence
-two=second sentence!}
+two=second sentence!}}
    }
    {td
+{code %language=xml
 {!<root>
    <elem>first sentence</elem>
    <elem>second sentence</elem>
-</root>!}
+</root>!}}
    }
  }
 }
