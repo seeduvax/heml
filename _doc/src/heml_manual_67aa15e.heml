@@ -50,13 +50,10 @@ management, in particular build tools (make) and SCM (subversion, git, ...).
 	{section %title=Yet another markup language (that is not YAML)
 Main features are:
   - More concise, then less characters to type
-  - As generic as XML: can express rich structured (hierarchical) information in
-    a same manner.
+  - As generic as XML: can express rich structured (hierarchical) information in a same manner.
   - Handles simple layouts (paragraph, indents and bullets) as wiki text.
-  - Big documents are still readable directly from ASCII tools. Consider using
-    your preferred syntax highlighter to gain more readability (a vim syntax 
-    file example is include in source HEML distribution). 
-	}
+  - Big documents are still readable directly from ASCII tools. Consider using your preferred syntax highlighter to gain more readability (a vim syntax file example is include in source HEML distribution).
+        }
 	{section %title=Drawbacks
 While processing, some layout information may be lost. Then, after automatic
 processing, it is not always possible to restore a document that is still
@@ -101,9 +98,8 @@ the tool used to build heml, see its {a
 {section %title=More features, XML mapping and examples
 	{section %title=Elements and attributes
 {table
-	{tr 
-		{th HEML}
-		{th XML}
+	{tr
+{th %w=1 %%HEML}{th %w=1 %%XML}
 	}
 	{tr
 		{td
@@ -129,9 +125,8 @@ the tool used to build heml, see its {a
 	}
 	{section %title=Paragraphs, indentations and bullets
 {table
-	{tr 
-		{th HEML}
-		{th XML}
+	{tr
+{th %w=1 %%HEML}{th %w=1 %%XML}
 	}
 	{tr
 		{td
@@ -183,9 +178,8 @@ Currently supported commands are:
 	}
 	{section %title=Includes
 {table
-	{tr 
-		{th HEML}
-		{th XML}
+	{tr
+{th %w=1 %%HEML}{th %w=1 %%XML}
 	}
 	{tr
 		{td
@@ -217,10 +211,9 @@ included paragraph!}}
 	}
 	{section %title=Files Extracts %xref=SecExtract
 {table
-	{tr 
-		{th HEML}
-		{th XML}
-	}
+ {tr
+{th %w=1 %%HEML}{th %w=1 %%XML}
+ }
 	{tr
 		{td
 FileA.heml:
@@ -252,9 +245,8 @@ ParserCallback.java:
 	}
 	{section %title=Insert a command output %xref=SecExec
 {table
-	{tr 
-		{th HEML}
-		{th XML}
+	{tr
+{th %w=1 %%HEML}{th %w=1 %%XML}
 	}
 	{tr
 		{td
@@ -309,9 +301,8 @@ handle the table content:
     {kw true}.
 
 {table
-	{tr 
-		{th HEML}
-		{th XML}
+	{tr
+{th %w=1 %%HEML}{th %w=1 %%XML}
 	}
 	{tr
 		{td
@@ -432,7 +423,7 @@ Lua scripts can be inserted and the document structure handler is bound to the
 lua context.
 {table
  {tr
-   {th HEML}{th XML}
+{th %w=1 %%HEML}{th %w=1 %%XML}
  }
  {tr
    {td
@@ -463,7 +454,7 @@ end
 	{section %title=Dictionary and keyword substitution %xref=SecDic
 {table
  {tr
-   {th HEML}{th XML}
+{th %w=1 %%HEML}{th %w=1 %%XML}
  }
  {tr
    {td
@@ -493,19 +484,15 @@ two=second sentence!}}
 }
 	}
 	{section %title=Miscellaneous features
-  - comments: text between \{\# and \#\} is ignored by the parser.
-  - as-is copy: text between \{\! and \!\} is not interpreted and forwarded
+  - comments: text between \{# and #\} is ignored by the parser.
+  - as-is copy: text between \{! and !\} is not interpreted and forwarded
     unchanged to the output inside au <pre> element.
-  - escape character: any character following \\ is forwarded to output as-is.
+  - escape character: any character following \ is forwarded to output as-is.
     Useful to include some of the HEML control char such as \{ into one
     element's text.   
-  - SAX-like callback API: the current java implementation can be used as a
-    library and programmer can define its own HEML handler by implementing the
-    {a %href=api/net/eduvax/heml/ParserCallback.html %%ParserCallback interface}.
-  - See this page's {a %href=/websvn/listing.php?repname=Eduvax+Java+Projects&path=/net.eduvax.heml/branches/0.1/src/doc/index.heml %%HEML source file} to see a complete use example.
-  - syntax highlight: markup is simple then syntax highlighting configuration
-    should be easy for common editors. A {a %href=/websvn/listing.php?repname=Eduvax+Java+Project&path=/net.eduvax.heml/branches/0.1/src/heml.vim %%syntax highlight vim script}
-    is included in HEML parser source distribution as an example.
+  - SAX-like callback API: the current java implementation can be used as a library and programmer can define its own HEML handler by implementing the {a %href=https://github.com/seeduvax/heml/blob/master/heml/src/net/eduvax/heml/ParserCallback.java %%ParserCallback interface}.
+  - See this documents's {a %href=https://github.com/seeduvax/heml/blob/master/_doc/src/heml_manual_67aa15e.heml %%HEML source file} to see a complete use example.
+  - syntax highlight: markup is simple then syntax highlighting configuration should be easy for common editors. A {a %href=https://github.com/seeduvax/heml/blob/master/heml/src/res/heml.vim %%syntax highlight vim script} is included in HEML parser source distribution as an example.
 	}
 }
 {section %title=Similar formats discussion
