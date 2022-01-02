@@ -32,6 +32,9 @@ The related XML output would be:
 </section>
 ```
 
+More details about the HEML features are available in the [HEML
+documentation][5].
+
 ## Change management
 Issue tracking is performed using the change request management feature from 
 [AbcrobaticBuildSystem][0].
@@ -62,3 +65,4 @@ edit such document, a [vim syntax highlight file][4] is available. See also
 [2]:https://github.com/fred322
 [3]:https://github.com/fred322/hemleditor
 [4]:heml/src/res/heml.vim
+[5]:http://www.eduvax.net/heml/heml_manual_67aa15e.pdf
