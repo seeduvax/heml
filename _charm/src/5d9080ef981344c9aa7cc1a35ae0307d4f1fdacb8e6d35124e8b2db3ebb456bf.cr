@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cr id="5d9080ef981344c9aa7cc1a35ae0307d4f1fdacb8e6d35124e8b2db3ebb456bf" state="working">
+<cr id="5d9080ef981344c9aa7cc1a35ae0307d4f1fdacb8e6d35124e8b2db3ebb456bf" state="closed" delivered="heml-1.0.10">
 <title>dictionary/properties based key substitution</title>
 <reporter>sdevaux</reporter>
 <creation>2021-12-14 17:48:50+01:00</creation>
