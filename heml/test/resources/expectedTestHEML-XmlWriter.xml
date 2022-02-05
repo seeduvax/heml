@@ -34,7 +34,7 @@
                  text after list
             </p>
             <p>tests</p>
-            <section a1="titre de la sous sous section â¬â¬">
+            <section title="titre deux de la sous sous section â¬â¬">
                 <p>paragraphe 3</p>
                 <ul>
                     <li> enumeration un</li>

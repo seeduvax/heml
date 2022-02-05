@@ -15,7 +15,7 @@ pararaphe 2
     test
 {p {kw One} text after list}
 tests
-{section%titre de la sous sous section €€
+{section%title=titre {?k two} de la sous sous section €€
 paragraphe 3
 - enumeration {?k one}
 - enumeration {?k two}

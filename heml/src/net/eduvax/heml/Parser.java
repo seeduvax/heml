@@ -454,6 +454,7 @@ public class Parser implements Runnable {
 	 * Or value if anonymous attribute.
 	 */
 	private class Attr extends State {
+        private String _cacheStr=null;
 		public Attr(State s) {
 			super(s);
 		}
@@ -461,11 +462,23 @@ public class Parser implements Runnable {
 // puml: state " " as _Attr
 // puml: [*] -> _Attr
 		public void handle(char ch) {
+            if (_cacheStr!=null) {
+                // when back from meta, restore what was
+                // previously done + what meta pushed.
+                // CAUTION: same specifc case is in AttrV
+                String s=_cacheStr+popAcc();
+                _acc.append(s);
+                _cacheStr=null;
+            }
 			if (ch=='=') {
 // puml: _Attr --> AttrV :=
 					_attrName=popAcc();
 					setState(new AttrV(getBackState()));
 			}					
+            else if (ch==_separators[S_OPEN]) {
+                    _cacheStr=popAcc();
+                    setState(new SElemFromAttr(this));
+            }
 			else if (ch==_separators[S_SEP]) {
 // puml: _Attr --> TorA1 :%
 					addAttribute();
@@ -508,15 +521,27 @@ public class Parser implements Runnable {
 // puml: state AttrV {
 // puml: state " " as _AttrV
 // puml: [*] -> _AttrV
+        private String _cacheStr;
 		public AttrV(State s) {
 			super(s);
 		}
 		public void handle(char ch) {
+            if (_cacheStr!=null) {
+                // when back from meta, restore what was
+                // previously done + what meta pushed.
+                String s=_cacheStr+popAcc();
+                _acc.append(s);
+                _cacheStr=null;
+            }
 			if (ch==_separators[S_SEP]) {
 // puml: _AttrV --> TorA1 : %
 					addAttribute();
 					setState(new TorA1(getBackState()));
 			}
+            else if (ch==_separators[S_OPEN]) {
+                    _cacheStr=popAcc();
+                    setState(new SElemFromAttr(this));
+            }
 			else if (ch=='\r') {
 // puml: _AttrV --> _AttrV : \\r
 			}
@@ -958,7 +983,7 @@ public class Parser implements Runnable {
 // puml: state SElem {
 // puml: }
 			if (ch==_separators[S_META]) {
-// No dot, same as default char
+// puml: SElem --> ElemName :{
                     startMeta();
 					setState(new ElemName(getBackState()));
 			}
@@ -977,6 +1002,25 @@ public class Parser implements Runnable {
 			}
 		}
 	}
+	private class SElemFromAttr extends State {
+		public SElemFromAttr(State s) {
+			super(s);
+		}
+		public void handle(char ch) {
+// puml: state SElemFromAttr {
+// puml: }
+			if (ch==_separators[S_META]) {
+// puml: SElem --> ElemName :{
+                    startMeta();
+					setState(new ElemName(getBackState()));
+			}
+            else {
+                _acc.append(_separators[S_OPEN]);
+                _acc.append(ch);
+                setState(getBackState());
+            }
+        }
+    }
 
     public interface MetaCommand extends Runnable {
         void setParameter(String id,String value);
@@ -1262,7 +1306,7 @@ public class Parser implements Runnable {
                 if (value==null) {
                     value="%% undefined keyword "+kw+" %%";
                 }
-                _handler.addText(value);
+                _acc.append(value);
                 setState(_backState.getBackState());
             }
             else {

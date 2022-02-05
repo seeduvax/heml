@@ -24,7 +24,7 @@ nothing                    }
 One                }
  text after list            }
             tests
-            {section %a1=titre de la sous sous section â¬â¬
+            {section %title=titre deux de la sous sous section â¬â¬
                 paragraphe 3
                     -  enumeration un
                     -  enumeration deux
