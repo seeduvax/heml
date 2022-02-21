@@ -143,6 +143,9 @@ public class HEML {
                 }
             }
             parser.run();
+            if (parser.getErrCount()!=0) {
+                rc=2;
+            }
             if (depOut!=null) {
                 depOut.println();
                 depOut.println();

@@ -232,13 +232,22 @@ public class Parser implements Runnable {
 	}
     private void setDefErrHandler() {
         _errHandler=new ErrHandler() {
+            private int _errCount=0;
             public void handle(String streamName, int line, int col,String msg) {
+                _errCount++;
                 System.err.println("Err:"+streamName+":"+line+":"+col+": "+msg);
+            }
+            public int getErrCount() {
+                return _errCount;
             }
         };
     }
     public void setErrHandler(ErrHandler handler) {
         _errHandler=handler;
+    }
+
+    public int getErrCount() {
+        return _errHandler.getErrCount();
     }
 
 	public void run() {
@@ -1305,6 +1314,7 @@ public class Parser implements Runnable {
                 }
                 if (value==null) {
                     value="%% undefined keyword "+kw+" %%";
+                    printErr("Undefined dictionnary keyword "+kw);
                 }
                 _acc.append(value);
                 setState(_backState.getBackState());
@@ -1681,6 +1691,7 @@ ex.printStackTrace();
 
     public interface ErrHandler {
         void handle(String streamName,int line,int col,String msg);
+        int getErrCount();
     }
 
     private class DummyHandler implements ParserCallback {
