@@ -251,8 +251,9 @@ public class Parser implements Runnable {
     }
 
 	public void run() {
-        _luaVm.set("parser",CoerceJavaToLua.coerce(Parser.this));
+        _luaVm.set("parser",CoerceJavaToLua.coerce(this));
         _luaVm.set("parameters",CoerceJavaToLua.coerce(_parameters));
+        _luaVm.set("dics",CoerceJavaToLua.coerce(_dics));
         try {
     		int ch=_in.read();
 	    	while (ch>=0) {
@@ -1082,6 +1083,10 @@ public class Parser implements Runnable {
 		public void run() {
             try {
                 Parser incParser=new Parser(_src,_handler);
+                incParser._dics=_dics;
+                incParser._parameters=_parameters;
+                incParser._luaVm=_luaVm;
+                _luaVm.set("parser",LuaValue.NIL);
                 if (_depOut!=null) {
                     _depOut.print(" "+_src);
                     incParser.setDepOut(_depOut,_elemDepMap);
@@ -1094,6 +1099,8 @@ public class Parser implements Runnable {
                 }
                 incParser._wrapLines=_wrapLines;
                 incParser.run();
+                _luaVm.set("parser",LuaValue.NIL);
+                _luaVm.set("parser",CoerceJavaToLua.coerce(Parser.this));
             }
             catch (Exception ex) {
                 printErr("Can't include "+_src+": "+ex.getMessage());
@@ -1223,8 +1230,12 @@ public class Parser implements Runnable {
                 _isClosing=true;
             }
 			else if (_isClosing && ch==_separators[S_CLOSE]) {
-                LuaValue l=_luaVm.load(_code.toString());
-                l.call();
+                try {
+                    LuaValue l=_luaVm.load(_code.toString());
+                    l.call();
+                }
+                catch (Exception ex) {
+                }
     			setState(_backState.getBackState());
 			}
 			else {
