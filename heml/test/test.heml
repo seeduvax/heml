@@ -93,7 +93,7 @@ a	b	c	d		e
 1	        2	3	4
 }
 {?table %src=test/test.csv %fieldSep=;}
-{plop
+{plop 
     ppppp
     ppppp
 {?extract %src=test/TestHEML.java %from=testXsl %to=\}}

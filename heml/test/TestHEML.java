@@ -54,6 +54,9 @@ public class TestHEML implements ParserCallback {
         public void handle(String streamName, int line, int col, String msg) {
             _count++;
         }
+        @Override public int getErrCount() {
+            return _count;
+        }
     }
     @Test
     public void testXsl() {

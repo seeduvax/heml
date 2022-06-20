@@ -1659,6 +1659,10 @@ ex.printStackTrace();
 			}
             else if (ch=='\t'||ch==' ') {
 			}
+			else if (ch=='\n') {
+// puml: _TorA3 --> TorA2 : \\n
+				setState(new TorA2(getBackState()));
+			}						
             else if (ch==_separators[S_CLOSE]) {
 // puml: _TorA3 -> [*]
                 if (_meta) {
