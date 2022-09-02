@@ -20,7 +20,9 @@ public class TestHEML implements ParserCallback {
     private String _outputDir=System.getenv("TTARGETDIR");
     private Parser getParser(ParserCallback pc) {
         try {
-            return new Parser("test/test.heml",pc);
+            Parser p=new Parser("test/test.heml",pc);
+            p.addSearchPath("test");
+            return p;
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -29,8 +31,10 @@ public class TestHEML implements ParserCallback {
     }
     private Parser getParser(String outFile) {
         try {
-            return new Parser("test/test.heml",
+            Parser p=new Parser("test/test.heml",
                 new PrintStream(new FileOutputStream(_outputDir+"/"+outFile)));
+            p.addSearchPath("test");
+            return p;
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -52,6 +56,7 @@ public class TestHEML implements ParserCallback {
     private class EH implements Parser.ErrHandler {
         public int _count=0;
         public void handle(String streamName, int line, int col, String msg) {
+System.out.println("ERROR: !!!!!! "+streamName+":"+line+":"+col+": "+msg);
             _count++;
         }
         @Override public int getErrCount() {
@@ -66,7 +71,7 @@ System.out.println("-------------------------------");
         p.setXslPath("test/test.xsl");
         p.setErrHandler(eh);
         assertNull(checkParse(p));
-        assertEquals(2,eh._count);
+        assertEquals(3,eh._count);
 System.out.println("-------------------------------");
         p=getParser("testHEML-Xsl.txt");
         eh=new EH();

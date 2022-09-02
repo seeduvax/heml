@@ -1078,6 +1078,17 @@ public class Parser implements Runnable {
         public void setParameter(String id,String value) {
             if ("src".equals(id)) {
                 _src=value;
+                File f=new File(_src);
+                if (!f.exists()) {
+                    for (String sp: _searchPaths) {
+                        String candidate=sp+"/"+value;
+                        f=new File(candidate);
+                        if (f.exists()) {
+                            _src=candidate;
+                            break;
+                        }
+                    }
+                }
             }
         }
 		public void run() {

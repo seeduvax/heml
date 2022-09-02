@@ -85,7 +85,7 @@ deux	%% deux2		% deux3
 trois	% trois1	% trois2 % trois3
 quatre	% quatre1
 }
-{?include %src=test/test-include1.heml}
+{?include %src=test-include1.heml}
 skdjhskdjhfskjdf
 lsdkfjsdlkf
 {?table %fieldSep=" \t" %token=true
