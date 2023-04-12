@@ -18,11 +18,49 @@ impl Parser {
             col: 0,
         }
     }
+    fn next_char(&mut self) -> Option<char> {
+        self.col+=1;
+        match self.chit.next() {
+            None => return None,
+            x=> {
+                match x.unwrap().unwrap() as char {
+                    '\n' => {
+                        self.col=0;
+                        self.line+=1;
+                        return Some('\n');
+                    },
+                    y => {
+                        self.col+=1;
+                        return Some(y);
+                    },
+                }
+            },
+        }
+    }
+
+    fn start_meta(&mut self) {
+    }
+
+    fn start_element(&mut self) {
+        match self.next_char() {
+            None => {
+                println!("Unexpected EOF");
+                return;
+            },
+            Some('?') => self.start_meta(),
+            _ => {},
+        }
+    }
+
     pub fn run(&mut self) {
         loop {
-            match self.chit.next() {
+            match self.next_char() {
                 None => break,
-                x => println!("{}", x.unwrap().unwrap()),
+                Some('{') => self.start_element(),
+                 _ => {
+                    println!("EOF expected here");
+                    break;
+                },
             }
         }
     }
