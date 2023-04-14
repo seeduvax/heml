@@ -1,4 +1,5 @@
 mod parser;
+mod heml_handler;
 use parser::Parser;
 use std::env;
 

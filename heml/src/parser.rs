@@ -3,12 +3,15 @@ use std::io::prelude::*;
 use std::io::BufReader;
 use std::io::Error;
 use std::iter::Iterator;
+use crate::heml_handler::HemlHandler;
+use crate::heml_handler::DebugHandler;
 
 pub struct Parser {
     chit: Box<dyn Iterator<Item=Result<u8, Error>>>,
     line: u64,
     col: u32,
     tabSize: u32,
+    handler: Box<dyn HemlHandler>,
 }
 
 impl Parser {
@@ -18,6 +21,7 @@ impl Parser {
             line: 0,
             col: 0,
             tabSize: 8,
+            handler: Box::new(DebugHandler {}),
         }
     }
     fn next_char(&mut self) -> Option<char> {
@@ -50,8 +54,26 @@ impl Parser {
         println!("start cdata")
     }
 
-    fn elem_name(&mut self) {
-        println!("start element")
+    /**
+     * Processing element name
+     */ 
+    fn elem_name(&mut self,c: char) {
+        let mut name = String::from("");
+        name.push(c);
+        loop {
+            match self.next_char() {
+                None => {
+                    println!("Unexpected EOF");
+                    return;
+                },
+                Some('%') | Some('\r') | Some('\n') => {
+                    self.handler.open_element(&name);
+// TODO shall switch to attribute management                    
+return;                    
+                },
+                x => name.push(x.unwrap()),
+            }
+        }
         
     }
     fn start_element(&mut self) {
@@ -64,8 +86,8 @@ impl Parser {
                 Some('?') => self.start_meta(),
                 Some('#') => self.start_comment(),
                 Some('!') => self.start_cdata(),
-                _ => {
-                    self.elem_name();
+                x => {
+                    self.elem_name(x.unwrap());
                     return
                 },
             }
@@ -94,7 +116,7 @@ impl Parser {
                 Some('\r') | Some('\n') => level=0,
 // puml: _Indent --> [*] : }
                 Some('}') => {
-                    println!("end element");
+                    self.handler.close_element();
                     return true;
                 }
                 _ => {}
