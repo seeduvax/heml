@@ -21,7 +21,7 @@ impl Parser {
             line: 0,
             col: 0,
             tabSize: 8,
-            handler: Box::new(DebugHandler {}),
+            handler: Box::new(DebugHandler::new()),
         }
     }
     fn next_char(&mut self) -> Option<char> {
@@ -47,15 +47,42 @@ impl Parser {
     fn start_meta(&mut self) {
         println!("start meta")
     }
-    fn start_comment(&mut self) {
-        println!("start comment")
+
+    /**
+     * State function: comment
+     */ 
+    fn handle_comment(&mut self) {
+        let mut may_end = false;
+        let mut comment = String::from("");
+        loop {
+            match self.next_char() {
+                None => {
+                    println!("Unexpected EOF");
+                    return;
+                },
+                Some('#') => may_end=true,
+                Some('}') => {
+                    if may_end {
+                        self.handler.add_comment(&comment);
+                        return;
+                    }
+                    else {
+                        comment.push('}');
+                    }
+                }
+                x => {
+                    may_end=false;
+                    comment.push(x.unwrap())
+                }
+            }
+        }
     }
     fn start_cdata(&mut self) {
         println!("start cdata")
     }
 
     /**
-     * Processing element name
+     * State function: element name.
      */ 
     fn elem_name(&mut self,c: char) {
         let mut name = String::from("");
@@ -76,6 +103,11 @@ return;
         }
         
     }
+
+    
+    /**
+     * state function: element start. 
+     */ 
     fn start_element(&mut self) {
         loop {
             match self.next_char() {
@@ -83,9 +115,18 @@ return;
                     println!("Unexpected EOF");
                     return;
                 },
+// puml: state SElem {
+// puml: }
+// puml: SElem --> SMeta :?
                 Some('?') => self.start_meta(),
-                Some('#') => self.start_comment(),
+// puml: SElem --> Comment :#
+                Some('#') => {
+                    self.handle_comment();
+                    return;
+                }
+// puml: SElem --> CData :!
                 Some('!') => self.start_cdata(),
+// puml: SElem --> ElemName
                 x => {
                     self.elem_name(x.unwrap());
                     return
@@ -95,7 +136,7 @@ return;
     }
 
     /**
-     * Indent handling.
+     * iState function: handling indentation.
      */
     fn indent(&mut self) -> bool {
         let mut level = 0u32;
@@ -105,7 +146,7 @@ return;
                     println!("EOF met");
                     return false;
                 },
-// puml: state indent {
+// puml: state Indent {
 // puml: state " " as _Indent
 // puml: [*] -> _Indent
 // puml: _Indent --> _Indent : \\t<sp>\\n
