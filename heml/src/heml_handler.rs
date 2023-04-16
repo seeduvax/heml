@@ -2,7 +2,7 @@ pub trait HemlHandler {
     fn open_element(&mut self, name: &str);
     fn close_element(&mut self);
     fn add_attribute(&mut self, name: &str, value: &str);
-    fn add_attributes(&mut self);
+    fn end_attributes(&mut self);
     fn add_text(&mut self, text: &str);
     fn open_para(&mut self);
     fn close_para(&mut self);
@@ -53,7 +53,7 @@ impl HemlHandler for DebugHandler {
         self.pindent();
         println!(" attr: {}={}",name,value);
     }
-    fn add_attributes(&mut self) {
+    fn end_attributes(&mut self) {
         self.pindent();
         println!(" attr completed");
     }

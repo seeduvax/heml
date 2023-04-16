@@ -77,14 +77,209 @@ impl Parser {
             }
         }
     }
+    /**
+     * State function: cdata
+     */ 
     fn start_cdata(&mut self) {
-        println!("start cdata")
+        let mut may_end = false;
+        let mut cdata = String::from("");
+        loop {
+            match self.next_char() {
+                None => {
+                    println!("Unexpected EOF");
+                    return;
+                },
+                Some('!') => may_end=true,
+                Some('}') => {
+                    if may_end {
+                        self.handler.add_cdata(&cdata);
+                        return;
+                    }
+                    else {
+                        cdata.push('}');
+                    }
+                }
+                x => {
+                    may_end=false;
+                    cdata.push(x.unwrap())
+                }
+            }
+        }
+    }
+
+
+    /**
+     * State function: in line text
+     */
+    fn in_line_text(&mut self) {
+    }
+
+    /**
+     * State function: attribute
+     */
+    fn attribute(&mut self, c: char) {
+    }
+
+    /**
+     * State function: text or attribute case 1
+     * % encountered, following may be attribute, element end or inline text.
+     */ 
+    fn text_or_attribute_1(&mut self, meta: bool) {
+        loop {
+            match self.next_char() {
+                None => {
+                    println!("Unexpected EOF");
+                    return;
+                },
+// puml: state TorA1 {
+// puml: state " " as _TorA1
+// puml: [*] -> _TorA1
+// puml: _TorA1 --> InlineText :%
+                Some('%') => {
+                    self.handler.end_attributes();
+                    self.in_line_text();
+                    return;
+                },
+                Some('\r') => {},
+// puml: _TorA1 --> TorA2 :\\n
+                Some('\n') => {
+                    self.text_or_attribute_2(meta);
+                },
+// puml: _TorA1 -> [*] :}
+                Some('}') => {
+                    if meta {
+                        // TODO endMetaAttributes() ?
+                    }
+                    else {
+                        self.handler.end_attributes();
+                        self.handler.close_element();
+                    }
+                    return;
+                },
+// puml: _TorA1 --> _Attr
+                x => {
+                    self.attribute(x.unwrap());
+                    return;
+                }
+// puml: }
+            }
+        }
+    }
+	/**
+	 * Text or attribute case 2.
+	 * new line encountered in attribute start, follwoing may be:
+	 * - attribute indented in new line, 
+	 * - structured text.  
+	 */
+    fn text_or_attribute_2(&mut self, meta: bool) {
+        let mut indent= 0u32;
+        loop {
+            match self.next_char() {
+                None => {
+                    println!("Unexpected EOF");
+                    return;
+                },
+// puml: state TorA2 {
+// puml: state " " as _TorA2
+// puml: [*] -> _TorA2
+                Some('\r') | Some('\n') => {},
+                Some('\t') => {
+                    indent+=self.tabSize;
+                },
+                Some(' ') => {
+                    indent+=1;
+                },
+// puml: _TorA2 --> TorA1 :%
+                Some('%') => {
+                    self.text_or_attribute_1(meta);
+                    return;
+                },
+// puml: _TorA2 --> SElem :{
+                Some('{') => {
+                    self.handler.end_attributes();
+                    self.indent(indent);
+                    return;
+                },
+// puml: _TorA2 -> [*] :}
+                Some('}') => {
+                    if meta {
+                        // TODO endMetaAttributes() ?
+                    }
+                    else {
+                        self.handler.end_attributes();
+                        self.handler.close_element();
+                    }
+                    return;
+                },
+                x => {
+                    if meta {
+                        // TODO endMetaAttributes() ?
+                    }
+                    else {
+                        self.handler.end_attributes();
+                        self.handler.close_element();
+                    }
+                    self.handler.end_attributes();
+                    self.indent(indent);
+                },
+            }
+        }
+    }
+    /**
+     * State function: text or attribute case 3
+     * space encountered, element name is known, following may be inline text
+     * or attributes.
+     */ 
+    fn text_or_attribute_3(&mut self, meta: bool) {
+        loop {
+            match self.next_char() {
+                None => {
+                    println!("Unexpected EOF");
+                    return;
+                },
+// puml: state TorA3 {
+// puml: state " " as _TorA3 
+// puml: [*] -> _TorA3
+// puml: _TorA3 --> TorA1: %
+                Some('%') => {
+                    self.text_or_attribute_1(meta);
+                    return;
+                },
+                Some('\t') | Some(' ') => {},
+// puml: _TorA3 --> TorA2 : \\n
+                Some('\n') => {
+                    self.text_or_attribute_2(meta);
+                    return;
+                },
+// puml: _TorA3 -> [*] :}
+                Some('}') => {
+                    if meta {
+                        // TODO endMetaAttributes() ?
+                    }
+                    else {
+                        self.handler.end_attributes();
+                        self.handler.close_element();
+                    }
+                    return;
+                },
+                x => {
+                    if meta {
+                        // TODO endMetaAttributes() ?
+                    }
+                    else {
+                        self.handler.end_attributes();
+                        self.in_line_text();
+                    }
+                    return;
+                },
+            }
+        }
     }
 
     /**
      * State function: element name.
      */ 
-    fn elem_name(&mut self,c: char) {
+    fn elem_name(&mut self,c: char, meta: bool) {
         let mut name = String::from("");
         name.push(c);
         loop {
@@ -93,12 +288,43 @@ impl Parser {
                     println!("Unexpected EOF");
                     return;
                 },
-                Some('%') | Some('\r') | Some('\n') => {
+                Some('\r') => {},
+// puml: state ElemName {
+// puml: state " " as _ElemName
+// puml: [*] -> _ElemName
+// puml: _ElemName --> TorA1 : %
+                Some('%')  => {
                     self.handler.open_element(&name);
-// TODO shall switch to attribute management                    
-return;                    
+                    self.text_or_attribute_1(meta);
+                    return;
                 },
+// puml: _ElemName --> TorA2 : \\n
+                Some('\n') => {
+                    self.handler.open_element(&name);
+                    self.text_or_attribute_2(meta);
+                    return;
+                },
+// puml: _ElemName --> TorA3 : <sp>
+                Some(' ') => {
+                    self.handler.open_element(&name);
+                    self.text_or_attribute_3(meta);
+                    return;
+                },
+// puml: _ElemName -> [*] : } 
+                Some('}') => {
+                    self.handler.open_element(&name);
+                    if meta {
+                        // TODO endMetaAttributes() ?
+                    }
+                    else {
+                        self.handler.end_attributes();
+                        self.handler.close_element();
+                    }
+                    return;
+                }
+// puml: _ElemName --> _ElemName
                 x => name.push(x.unwrap()),
+// puml: }
             }
         }
         
@@ -128,7 +354,7 @@ return;
                 Some('!') => self.start_cdata(),
 // puml: SElem --> ElemName
                 x => {
-                    self.elem_name(x.unwrap());
+                    self.elem_name(x.unwrap(),false);
                     return
                 },
             }
@@ -138,7 +364,7 @@ return;
     /**
      * iState function: handling indentation.
      */
-    fn indent(&mut self) -> bool {
+    fn indent(&mut self, indent: u32) -> bool {
         let mut level = 0u32;
         loop {
             match self.next_char() {
@@ -169,7 +395,7 @@ return;
 
     pub fn run(&mut self) {
         
-        while self.indent() {
+        while self.indent(0) {
         }
     }
 }
