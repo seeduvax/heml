@@ -40,9 +40,9 @@ impl DebugHandler {
 
 impl HemlHandler for DebugHandler {
     fn open_element(&mut self, name: &str) {
-        self.indent+=1;
         self.pindent();
         println!("open element {}",name);
+        self.indent+=1;
     }
     fn close_element(&mut self) {
         self.indent-=1;
@@ -72,9 +72,9 @@ impl HemlHandler for DebugHandler {
         println!("   :para");
     }
     fn open_indent(&mut self) {
-        self.indent+=1;
         self.pindent();
         println!("   indent:");
+        self.indent+=1;
     }
     fn close_indent(&mut self) {
         self.indent-=1;
@@ -82,9 +82,9 @@ impl HemlHandler for DebugHandler {
         println!("   :indent");
     }
     fn open_enum(&mut self) {
-        self.indent+=1;
         self.pindent();
         println!("   enum:");
+        self.indent+=1;
     }
     fn close_enum(&mut self) {
         self.indent-=1;
@@ -100,8 +100,8 @@ impl HemlHandler for DebugHandler {
         println!(" /! {} !/",cdata);
     }
     fn open_document(&mut self) {
-        self.indent+=1;
         println!("begin_document");
+        self.indent+=1;
     }
     fn close_document(&mut self) {
         self.indent-=1;

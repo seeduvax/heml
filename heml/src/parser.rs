@@ -160,7 +160,20 @@ impl Parser {
         }
     }
 
+    /**
+     * ?????
+     */
     fn start_element_from_attribute(&mut self) {
+        match self.next_char() {
+            None => {
+                println!("Unexpected EOF");
+            },
+            Some('{') => {
+                self.elem_name(None,true);
+            },
+            _ => {},
+        }
+        return
     }
 
     /**
@@ -238,7 +251,7 @@ impl Parser {
                 }
 // puml: _Attr --> TorA1 :%
                 Some('%') => {
-                    self.handler.add_attribute(&name,"");
+                    self.handler.add_attribute("",&name);
                     self.text_or_attribute_1(meta);
                     return;
                 },
@@ -246,7 +259,7 @@ impl Parser {
                 Some('\r') => {},
 // puml: _Attr --> TorA2 :\\n
                 Some('\n') => {
-                    self.handler.add_attribute(&name,"");
+                    self.handler.add_attribute("",&name);
                     self.text_or_attribute_2(meta);
                     return;
                 },
@@ -258,7 +271,7 @@ impl Parser {
                         // TODO endMetaAttributes() ?
                     }
                     else {
-                        self.handler.add_attribute(&name,"");
+                        self.handler.add_attribute("",&name);
                         self.handler.end_attributes();
                         self.handler.close_element();
                     }
@@ -346,7 +359,7 @@ impl Parser {
 // puml: _TorA2 --> SElem :{
                 Some('{') => {
                     self.handler.end_attributes();
-                    self.indent(indent);
+                    self.start_element();
                     return;
                 },
 // puml: _TorA2 -> [*] :}
@@ -428,9 +441,11 @@ impl Parser {
     /**
      * State function: element name.
      */ 
-    fn elem_name(&mut self,c: char, meta: bool) {
+    fn elem_name(&mut self,c: Option<char>, meta: bool) {
         let mut name = String::from("");
-        name.push(c);
+        if c!=None {
+            name.push(c.unwrap());
+        }
         loop {
             match self.next_char() {
                 None => {
@@ -503,7 +518,7 @@ impl Parser {
                 Some('!') => self.start_cdata(),
 // puml: SElem --> ElemName
                 x => {
-                    self.elem_name(x.unwrap(),false);
+                    self.elem_name(x,false);
                     return
                 },
             }
@@ -543,9 +558,11 @@ impl Parser {
 
 
     pub fn run(&mut self) {
-        
+       
+        self.handler.open_document(); 
         while self.indent(0) {
         }
+        self.handler.close_document(); 
     }
 }
 
