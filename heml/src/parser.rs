@@ -107,17 +107,166 @@ impl Parser {
         }
     }
 
+    /**
+     * State function: escape char
+     * Backslash encountered, next char shall be kept as is.
+     */
+    fn escape_char(&mut self, text: &mut String) {
+        match self.next_char() {
+            None => {
+                println!("Unexpected EOF");
+            },
+            x => {
+                text.push(x.unwrap());
+            },
+        }
+    }
 
     /**
      * State function: in line text
      */
-    fn in_line_text(&mut self) {
+    fn in_line_text(&mut self, c: Option<char>) {
+        let mut text = String::from("");
+        if c!=None {
+            text.push(c.unwrap());
+        }
+        loop {
+            match self.next_char() {
+                None => {
+                    println!("Unexpected EOF");
+                    return;
+                },
+// puml: state InlineText {
+// puml: state " " as _InlineText
+// puml: [*] -> _InlineText
+// puml: _InlineText -> [*] :}
+                Some('}') => {
+                    self.handler.add_text(&text);
+                    self.handler.close_element();
+                    return;
+                },
+// puml: _InlineText --> EscChar :\\
+                Some('\\') => self.escape_char(&mut text),
+// puml: _InlineText --> SElem :{
+                Some('{') => {
+                    self.handler.add_text(&text);
+                    text=String::from("");
+                    self.start_element();
+                },
+// puml: _InlineText --> _InlineText
+                x => text.push(x.unwrap()),
+            }
+// puml: }
+        }
+    }
+
+    fn start_element_from_attribute(&mut self) {
+    }
+
+    /**
+     * State function: attribute value
+     */
+    fn attribute_value(&mut self, meta: bool, name: &str) {
+        let mut value = String::from("");
+        loop {
+            match self.next_char() {
+                None => {
+                    println!("Unexpected EOF");
+                    return;
+                },
+// puml: state AttrV {
+// puml: state " " as _AttrV
+// puml: [*] -> _AttrV
+// puml: _AttrV --> TorA1 : %
+                Some('%') => {
+                    self.handler.add_attribute(name,&value);
+                    self.text_or_attribute_1(meta);
+                    return
+                },
+                Some('{') => {
+                    self.start_element_from_attribute();
+                },
+                Some('\r') => {},
+// puml: _AttrV --> _AttrV : \\r
+// puml: _AttrV --> TorA2 :\\n
+                Some('\n') => {
+                    self.handler.add_attribute(name,&value);
+                    self.text_or_attribute_2(meta);
+                    return;
+                },
+// puml: _AttrV -> [*] :}
+                Some('}') => {
+                    if meta {
+                        // TODO endMetaAttributes() ?
+                    }
+                    else {
+                        self.handler.add_attribute(name,&value);
+                        self.handler.end_attributes();
+                        self.handler.close_element();
+                    }
+                    return;
+                },
+// puml: _AttrV --> EscChar :\\
+                Some('\\') => self.escape_char(&mut value),
+                x => value.push(x.unwrap()),
+            }
+        }
     }
 
     /**
      * State function: attribute
      */
-    fn attribute(&mut self, c: char) {
+    fn attribute(&mut self, meta: bool, c: char) {
+        let mut name = String::from("");
+        name.push(c);
+        loop {
+            match self.next_char() {
+                None => {
+                    println!("Unexpected EOF");
+                    return;
+                },
+// puml: state Attr {
+// puml: state " " as _Attr
+// puml: [*] -> _Attr
+// puml: _Attr --> AttrV :=
+                Some('=') => {
+                    self.attribute_value(meta, &name);
+                    return;
+                },
+                Some('{') => {
+                    self.start_element_from_attribute();
+                }
+// puml: _Attr --> TorA1 :%
+                Some('%') => {
+                    self.handler.add_attribute(&name,"");
+                    self.text_or_attribute_1(meta);
+                    return;
+                },
+// puml: _Attr --> _Attr :\\r
+                Some('\r') => {},
+// puml: _Attr --> TorA2 :\\n
+                Some('\n') => {
+                    self.handler.add_attribute(&name,"");
+                    self.text_or_attribute_2(meta);
+                    return;
+                },
+// puml: _Attr --> EscChar :\\
+                Some('\\') => self.escape_char(&mut name),
+// puml: _Attr -> [*] :}
+                Some('}') => {
+                    if meta {
+                        // TODO endMetaAttributes() ?
+                    }
+                    else {
+                        self.handler.add_attribute(&name,"");
+                        self.handler.end_attributes();
+                        self.handler.close_element();
+                    }
+                    return;
+                },
+                x => name.push(x.unwrap()),
+            }
+        }
     }
 
     /**
@@ -137,7 +286,7 @@ impl Parser {
 // puml: _TorA1 --> InlineText :%
                 Some('%') => {
                     self.handler.end_attributes();
-                    self.in_line_text();
+                    self.in_line_text(None);
                     return;
                 },
                 Some('\r') => {},
@@ -158,7 +307,7 @@ impl Parser {
                 },
 // puml: _TorA1 --> _Attr
                 x => {
-                    self.attribute(x.unwrap());
+                    self.attribute(meta,x.unwrap());
                     return;
                 }
 // puml: }
@@ -268,7 +417,7 @@ impl Parser {
                     }
                     else {
                         self.handler.end_attributes();
-                        self.in_line_text();
+                        self.in_line_text(x);
                     }
                     return;
                 },
