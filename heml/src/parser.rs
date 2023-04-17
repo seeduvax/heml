@@ -379,10 +379,9 @@ impl Parser {
                     }
                     else {
                         self.handler.end_attributes();
-                        self.handler.close_element();
+                        self.indent(indent,x);
+                        return;
                     }
-                    self.handler.end_attributes();
-                    self.indent(indent);
                 },
             }
         }
@@ -526,10 +525,75 @@ impl Parser {
     }
 
     /**
-     * iState function: handling indentation.
+     * State function: indent text
      */
-    fn indent(&mut self, indent: u32) -> bool {
+    fn indent_text(&mut self, meta: bool, bullet: bool, s: &str) {
+        let mut text = String::from(s);
+        let mut closed = false;
+        let mut close=|sf: &mut Parser| {
+            if !closed {
+                if bullet {
+                    sf.handler.close_enum();
+                }
+                else {
+                    sf.handler.close_para();
+                }
+                closed=true;
+            }
+        };
+
+        if bullet {
+            self.handler.open_enum();
+        }
+        else {
+            self.handler.open_para();
+        }
+        
+        loop {
+            match self.next_char() {
+                None => {
+                    println!("EOF met");
+                    return;
+                },
+// puml: state IndentText {
+// puml: state " " as _IndentText
+                Some('\r') => {},
+// puml: _IndentText --> ELine :\\n
+                Some('\n') => {
+                    self.handler.add_text(&text);
+                    close(self);
+                    return;
+                },
+                Some('{') => {
+                    self.handler.add_text(&text);
+                    text=String::from("");
+                    self.start_element();
+                },
+                Some('}') => {
+                    self.handler.add_text(&text);
+                    if meta {
+                        // TODO end meta attributes
+                    }
+                    else {
+                        self.handler.close_element();
+                        return;
+                    }
+
+                }
+                Some('\\') => self.escape_char(&mut text),
+                x => text.push(x.unwrap()),
+            }
+        }
+    }
+    /**
+     * State function: handling indentation.
+     */
+    fn indent(&mut self, indent: u32, c: Option<char>) -> bool {
         let mut level = 0u32;
+        let mut text = String::from("");
+        if c!=None {
+            text.push(c.unwrap());
+        }
         loop {
             match self.next_char() {
                 None => {
@@ -549,8 +613,11 @@ impl Parser {
                 Some('}') => {
                     self.handler.close_element();
                     return true;
-                }
-                _ => {}
+                },
+                x => {
+                    text.push(x.unwrap());
+                    self.indent_text(false,false,&text);
+                },
 // puml: }
             }
         }
@@ -560,7 +627,7 @@ impl Parser {
     pub fn run(&mut self) {
        
         self.handler.open_document(); 
-        while self.indent(0) {
+        while self.indent(0,None) {
         }
         self.handler.close_document(); 
     }
