@@ -10,7 +10,7 @@ pub struct Parser {
     chit: Box<dyn Iterator<Item=Result<u8, Error>>>,
     line: u64,
     col: u32,
-    tabSize: u32,
+    tab_size: u32,
     handler: Box<dyn HemlHandler>,
 }
 
@@ -20,7 +20,7 @@ impl Parser {
             chit: Box::new(BufReader::new(File::open(name).expect("Open failed")).bytes()),
             line: 0,
             col: 0,
-            tabSize: 8,
+            tab_size: 8,
             handler: Box::new(DebugHandler::new()),
         }
     }
@@ -346,7 +346,7 @@ impl Parser {
 // puml: [*] -> _TorA2
                 Some('\r') | Some('\n') => {},
                 Some('\t') => {
-                    indent+=self.tabSize;
+                    indent+=self.tab_size;
                 },
                 Some(' ') => {
                     indent+=1;
@@ -527,7 +527,7 @@ impl Parser {
     /**
      * State function: indent text
      */
-    fn indent_text(&mut self, meta: bool, bullet: bool, s: &str) {
+    fn indent_text(&mut self, indent: u32, meta: bool, bullet: bool, s: &str) {
         let mut text = String::from(s);
         let mut closed = false;
         let mut close=|sf: &mut Parser| {
@@ -562,6 +562,7 @@ impl Parser {
                 Some('\n') => {
                     self.handler.add_text(&text);
                     close(self);
+                    self.indent(indent,None);
                     return;
                 },
                 Some('{') => {
@@ -589,8 +590,10 @@ impl Parser {
      * State function: handling indentation.
      */
     fn indent(&mut self, indent: u32, c: Option<char>) -> bool {
-        let mut level = 0u32;
+        let mut ref_indent = indent;
+        let mut current_indent = 0u32;
         let mut text = String::from("");
+        let mut bullet = false;
         if c!=None {
             text.push(c.unwrap());
         }
@@ -604,28 +607,40 @@ impl Parser {
 // puml: state " " as _Indent
 // puml: [*] -> _Indent
 // puml: _Indent --> _Indent : \\t<sp>\\n
-                Some('\t') => level+=self.tabSize,
-                Some(' ') => level+=1,
+                Some('\t') => current_indent+=self.tab_size,
+                Some(' ') => current_indent+=1,
 // puml: _Indent --> SElem : {
                 Some('{') => self.start_element(),
-                Some('\r') | Some('\n') => level=0,
+                Some('\r') | Some('\n') => current_indent=0,
 // puml: _Indent --> [*] : }
                 Some('}') => {
                     self.handler.close_element();
                     return true;
                 },
+                Some('-') => bullet=true,
                 x => {
                     text.push(x.unwrap());
-                    self.indent_text(false,false,&text);
+                    if current_indent>ref_indent {
+                        self.handler.open_indent();
+                    }
+                    self.indent_text(current_indent,false,bullet,&text);
+                    if current_indent>ref_indent {
+                        self.handler.close_indent();
+                    }
+                    text=String::from("");
+                    bullet=false;
                 },
 // puml: }
             }
         }
     }
 
-
+    /**
+     * Run the parser.
+     * While running, the parser shall callback the heml handler given at
+     * construction, while parsing when entities are met.
+     */
     pub fn run(&mut self) {
-       
         self.handler.open_document(); 
         while self.indent(0,None) {
         }
