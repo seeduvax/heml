@@ -527,10 +527,11 @@ impl Parser {
     /**
      * State function: indent text
      */
-    fn indent_text(&mut self, meta: bool, bullet: bool, c: Option<char>) {
+    fn indent_text(&mut self, meta: bool, c: char) {
+        let bullet = c=='-';
         let mut text = String::from("");
-        if c!=None {
-            text = String::from(c.unwrap());
+        if !bullet {
+            text = String::from(c);
         }
         let mut closed = false;
         let mut close=|sf: &mut Parser| {
@@ -591,20 +592,18 @@ impl Parser {
     /**
      * State function: handling indentation.
      */
-    fn indent(&mut self, ref_indent: u32, c: Option<char>) -> Option<u32> {
+    fn indent(&mut self, ref_indent: u32, c: Option<char>) 
+                            -> (Option<u32>, Option<char>) {
         let mut indent = 0u32;
-
-println!("//// {:?}",c);        
         match c {
             None => {},
-            Some('-') => self.indent_text(false,true,None),
-            x => self.indent_text(false,false,x),
+            x => self.indent_text(false,x.unwrap()),
         }
         loop {
             match self.next_char() {
                 None => {
                     println!("EOF met");
-                    return None;
+                    return (None,None);
                 },
 // puml: state Indent {
 // puml: state " " as _Indent
@@ -618,19 +617,28 @@ println!("//// {:?}",c);
 // puml: _Indent --> [*] : }
                 Some('}') => {
                     self.handler.close_element();
-                    return Some(indent);
+                    return (Some(indent),None);
                 },
                 x => {
                     if indent > ref_indent {
                         self.handler.open_indent();
-                        indent=self.indent(indent,x).unwrap();
+                        let (new_indent,rc)=self.indent(indent,x);
                         self.handler.close_indent();
+                        if new_indent!= None && new_indent.unwrap() < ref_indent {
+                            return (new_indent, rc);
+                        }
+                        else {
+                            match rc {
+                                None => {},
+                                x => self.indent_text(false,x.unwrap()),
+                            }
+                        }
                     }
                     else if indent < ref_indent {
-                        return Some(indent);
+                        return (Some(indent),x);
                     }
                     else {
-                        indent=self.indent(indent,x).unwrap();
+                        self.indent_text(false,x.unwrap());
                     }
                 },
 // puml: }
@@ -645,7 +653,10 @@ println!("//// {:?}",c);
      */
     pub fn run(&mut self) {
         self.handler.open_document(); 
-        while self.indent(0,None)!=None {
+        let mut eof = false;
+        while !eof {
+            let (i,_)=self.indent(0,None);
+            eof=i==None;
         }
         self.handler.close_document(); 
     }

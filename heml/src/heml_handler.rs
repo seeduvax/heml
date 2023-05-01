@@ -62,34 +62,34 @@ impl HemlHandler for DebugHandler {
         println!("  [text: {}]",text);
     }
     fn open_para(&mut self) {
-        self.indent+=1;
         self.pindent();
-        println!("   [open:para]");
+        println!("[open:para]");
+        self.indent+=1;
     }
     fn close_para(&mut self) {
         self.indent-=1;
         self.pindent();
-        println!("   [close:para]");
+        println!("[close:para]");
     }
     fn open_indent(&mut self) {
         self.pindent();
-        println!("   [open:indent]");
+        println!("[open:indent]");
         self.indent+=1;
     }
     fn close_indent(&mut self) {
         self.indent-=1;
         self.pindent();
-        println!("   [close:indent]");
+        println!("[close:indent]");
     }
     fn open_enum(&mut self) {
         self.pindent();
-        println!("   [open:enum]");
+        println!("[open:enum]");
         self.indent+=1;
     }
     fn close_enum(&mut self) {
         self.indent-=1;
         self.pindent();
-        println!("   [close:enum]");
+        println!("[close:enum]");
     }
     fn add_comment(&mut self, comment: &str) {
         self.pindent();
