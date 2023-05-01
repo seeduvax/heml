@@ -527,8 +527,11 @@ impl Parser {
     /**
      * State function: indent text
      */
-    fn indent_text(&mut self, indent: u32, meta: bool, bullet: bool, s: &str) {
-        let mut text = String::from(s);
+    fn indent_text(&mut self, meta: bool, bullet: bool, c: Option<char>) {
+        let mut text = String::from("");
+        if c!=None {
+            text = String::from(c.unwrap());
+        }
         let mut closed = false;
         let mut close=|sf: &mut Parser| {
             if !closed {
@@ -562,7 +565,6 @@ impl Parser {
                 Some('\n') => {
                     self.handler.add_text(&text);
                     close(self);
-                    self.indent(indent,None);
                     return;
                 },
                 Some('{') => {
@@ -589,46 +591,47 @@ impl Parser {
     /**
      * State function: handling indentation.
      */
-    fn indent(&mut self, indent: u32, c: Option<char>) -> bool {
-        let mut ref_indent = indent;
-        let mut current_indent = 0u32;
-        let mut text = String::from("");
-        let mut bullet = false;
-        if c!=None {
-            text.push(c.unwrap());
+    fn indent(&mut self, ref_indent: u32, c: Option<char>) -> Option<u32> {
+        let mut indent = 0u32;
+
+println!("//// {:?}",c);        
+        match c {
+            None => {},
+            Some('-') => self.indent_text(false,true,None),
+            x => self.indent_text(false,false,x),
         }
         loop {
             match self.next_char() {
                 None => {
                     println!("EOF met");
-                    return false;
+                    return None;
                 },
 // puml: state Indent {
 // puml: state " " as _Indent
 // puml: [*] -> _Indent
 // puml: _Indent --> _Indent : \\t<sp>\\n
-                Some('\t') => current_indent+=self.tab_size,
-                Some(' ') => current_indent+=1,
+                Some('\t') => indent+=self.tab_size,
+                Some(' ') => indent+=1,
 // puml: _Indent --> SElem : {
                 Some('{') => self.start_element(),
-                Some('\r') | Some('\n') => current_indent=0,
+                Some('\r') | Some('\n') => indent=0,
 // puml: _Indent --> [*] : }
                 Some('}') => {
                     self.handler.close_element();
-                    return true;
+                    return Some(indent);
                 },
-                Some('-') => bullet=true,
                 x => {
-                    text.push(x.unwrap());
-                    if current_indent>ref_indent {
+                    if indent > ref_indent {
                         self.handler.open_indent();
-                    }
-                    self.indent_text(current_indent,false,bullet,&text);
-                    if current_indent>ref_indent {
+                        indent=self.indent(indent,x).unwrap();
                         self.handler.close_indent();
                     }
-                    text=String::from("");
-                    bullet=false;
+                    else if indent < ref_indent {
+                        return Some(indent);
+                    }
+                    else {
+                        indent=self.indent(indent,x).unwrap();
+                    }
                 },
 // puml: }
             }
@@ -642,7 +645,7 @@ impl Parser {
      */
     pub fn run(&mut self) {
         self.handler.open_document(); 
-        while self.indent(0,None) {
+        while self.indent(0,None)!=None {
         }
         self.handler.close_document(); 
     }

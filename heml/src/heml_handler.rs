@@ -41,55 +41,55 @@ impl DebugHandler {
 impl HemlHandler for DebugHandler {
     fn open_element(&mut self, name: &str) {
         self.pindent();
-        println!("open element {}",name);
+        println!("[open:{}]",name);
         self.indent+=1;
     }
     fn close_element(&mut self) {
         self.indent-=1;
         self.pindent();
-        println!("close element");
+        println!("[close]");
     }
     fn add_attribute(&mut self, name: &str, value: &str) {
         self.pindent();
-        println!(" attr: {}={}",name,value);
+        println!(" %{}={}",name,value);
     }
     fn end_attributes(&mut self) {
         self.pindent();
-        println!(" attr completed");
+        println!(" %%");
     }
     fn add_text(&mut self, text: &str) {
         self.pindent();
-        println!("  text: {}",text);
+        println!("  [text: {}]",text);
     }
     fn open_para(&mut self) {
         self.indent+=1;
         self.pindent();
-        println!("   para:");
+        println!("   [open:para]");
     }
     fn close_para(&mut self) {
         self.indent-=1;
         self.pindent();
-        println!("   :para");
+        println!("   [close:para]");
     }
     fn open_indent(&mut self) {
         self.pindent();
-        println!("   indent:");
+        println!("   [open:indent]");
         self.indent+=1;
     }
     fn close_indent(&mut self) {
         self.indent-=1;
         self.pindent();
-        println!("   :indent");
+        println!("   [close:indent]");
     }
     fn open_enum(&mut self) {
         self.pindent();
-        println!("   enum:");
+        println!("   [open:enum]");
         self.indent+=1;
     }
     fn close_enum(&mut self) {
         self.indent-=1;
         self.pindent();
-        println!("   :enum");
+        println!("   [close:enum]");
     }
     fn add_comment(&mut self, comment: &str) {
         self.pindent();
@@ -100,12 +100,12 @@ impl HemlHandler for DebugHandler {
         println!(" /! {} !/",cdata);
     }
     fn open_document(&mut self) {
-        println!("begin_document");
+        println!("[begin_document]");
         self.indent+=1;
     }
     fn close_document(&mut self) {
         self.indent-=1;
         self.pindent();
-        println!("end_document");
+        println!("[end_document]");
     }
 }
