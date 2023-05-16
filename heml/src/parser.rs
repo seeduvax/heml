@@ -609,7 +609,7 @@ impl Parser {
 // puml: state " " as _Indent
 // puml: [*] -> _Indent
 // puml: _Indent --> _Indent : \\t<sp>\\n
-                Some('\t') => indent+=self.tab_size,
+                Some('\t') => indent+=self.tab_size-indent%self.tab_size,
                 Some(' ') => indent+=1,
 // puml: _Indent --> SElem : {
                 Some('{') => self.start_element(),
@@ -623,6 +623,7 @@ impl Parser {
                     if indent > ref_indent {
                         self.handler.open_indent();
                         let (new_indent,rc)=self.indent(indent,x);
+                        indent=0;
                         self.handler.close_indent();
                         if new_indent!= None && new_indent.unwrap() < ref_indent {
                             return (new_indent, rc);
@@ -630,7 +631,10 @@ impl Parser {
                         else {
                             match rc {
                                 None => {},
-                                x => self.indent_text(false,x.unwrap()),
+                                x => {
+                                    self.indent_text(false,x.unwrap());
+                                    indent=0;
+                                }
                             }
                         }
                     }
@@ -639,6 +643,7 @@ impl Parser {
                     }
                     else {
                         self.indent_text(false,x.unwrap());
+                        indent=0;
                     }
                 },
 // puml: }
