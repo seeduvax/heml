@@ -1,3 +1,8 @@
+extern crate xml;
+
+use xml::writer::EmitterConfig;
+use xml::writer::XmlEvent;
+
 pub trait HemlHandler {
     fn open_element(&mut self, name: &str);
     fn close_element(&mut self);
