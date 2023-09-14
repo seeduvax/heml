@@ -120,6 +120,7 @@ use xml::writer::XmlEvent;
 
 pub struct XmlWriter {
     writer: EventWriter<Stdout>,
+    startEv: Option<XmlEvent>,
 }
 
 impl XmlWriter {
@@ -129,17 +130,23 @@ impl XmlWriter {
             writer: EmitterConfig::new()
                 .perform_indent(true)
                 .create_writer(output),
+            startEv: None,
         }
     }
 }
 
 impl HemlHandler for XmlWriter {
     fn open_element(&mut self, name: &str) {
-        let ev=XmlEvent::start_element(name).into();
-        self.writer.write(ev);
+        self.startEv=Some(XmlEvent::start_element(name));
     }
     fn close_element(&mut self) {
-        let ev=XmlEvent::close_element().into();
+        let ev: XmlEvent=XmlEvent::end_element().into();
         self.writer.write(ev);
+    }
+    fn add_attribute(&mut self,name: &str, value: &str) {
+//        self.startEv.attr(name,value);
+    }
+    fn end_attributes(&mut self) {
+//        self.writer.write(self.startEv);
     }
 }
