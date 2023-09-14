@@ -1,8 +1,3 @@
-extern crate xml;
-
-use xml::writer::EmitterConfig;
-use xml::writer::XmlEvent;
-
 pub trait HemlHandler {
     fn open_element(&mut self, name: &str);
     fn close_element(&mut self);
@@ -112,5 +107,39 @@ impl HemlHandler for DebugHandler {
         self.indent-=1;
         self.pindent();
         println!("[end_document]");
+    }
+}
+
+extern crate xml;
+use std::io;
+use std::io::Stdout;
+
+use xml::writer::EmitterConfig;
+use xml::writer::EventWriter;
+use xml::writer::XmlEvent;
+
+pub struct XmlWriter {
+    writer: EventWriter<Stdout>,
+}
+
+impl XmlWriter {
+    pub fn new() -> XmlWriter {
+        let output=io::stdout();
+        XmlWriter {
+            writer: EmitterConfig::new()
+                .perform_indent(true)
+                .create_writer(output),
+        }
+    }
+}
+
+impl HemlHandler for XmlWriter {
+    fn open_element(&mut self, name: &str) {
+        let ev=XmlEvent::start_element(name).into();
+        self.writer.write(ev);
+    }
+    fn close_element(&mut self) {
+        let ev=XmlEvent::close_element().into();
+        self.writer.write(ev);
     }
 }
