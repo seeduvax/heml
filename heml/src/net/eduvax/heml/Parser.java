@@ -1097,6 +1097,7 @@ public class Parser implements Runnable {
                 incParser._dics=_dics;
                 incParser._parameters=_parameters;
                 incParser._luaVm=_luaVm;
+                incParser._searchPaths=_searchPaths;
                 _luaVm.set("parser",LuaValue.NIL);
                 if (_depOut!=null) {
                     _depOut.print(" "+_src);
